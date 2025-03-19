@@ -65,6 +65,17 @@
 #    define LEAPI
 #endif
 
+// C++ compatibility, preventing name mangling
+#if defined( __cplusplus )
+/* clang-format off */
+#    define CXX_GUARD_START extern "C" {
+#    define CXX_GUARD_END   }
+/* clang-format on */
+#else
+#    define CXX_GUARD_START
+#    define CXX_GUARD_END
+#endif
+
 // Boolean
 #if !defined( __cplusplus ) && !defined( bool )
 #    if defined( __has_include ) && __has_include( <stdbool.h> )
@@ -205,65 +216,60 @@ typedef enum
 // FUNCTIONS DECLARATIONS
 //===========================================================================================================
 
-#if defined( __cplusplus )
-extern "C"
-{
-#endif
+CXX_GUARD_START
 
-    //--- CORE --------------------------------------------------------------------------------------------------
+//--- CORE --------------------------------------------------------------------------------------------------
 
-    // Window
-    LEAPI void   InitWindow( int width, int height, const char * title );
-    LEAPI void   CloseWindow( void );
-    LEAPI void   SetWindowTitle( const char * title );
-    LEAPI bool   ShouldQuit( void );
-    LEAPI void * GetWindowHandle( void );
+// Window
+LEAPI void   InitWindow( int width, int height, const char * title );
+LEAPI void   CloseWindow( void );
+LEAPI void   SetWindowTitle( const char * title );
+LEAPI bool   ShouldQuit( void );
+LEAPI void * GetWindowHandle( void );
 
-    // Timing functions
-    LEAPI void   SetTargetFPS( int fps );
-    LEAPI float  GetFrameTime( void );
-    LEAPI double GetTime( void );
-    LEAPI int    GetFPS( void );
-    LEAPI void   SwapBuffers( void );
-    LEAPI void   WaitTime( double seconds );
+// Timing functions
+LEAPI void   SetTargetFPS( int fps );
+LEAPI float  GetFrameTime( void );
+LEAPI double GetTime( void );
+LEAPI int    GetFPS( void );
+LEAPI void   SwapBuffers( void );
+LEAPI void   WaitTime( double seconds );
 
-    // Drawing functions
-    LEAPI void ClearBackground( Color color );
-    LEAPI void BeginDrawing( void );
-    LEAPI void EndDrawing( void );
+// Drawing functions
+LEAPI void ClearBackground( Color color );
+LEAPI void BeginDrawing( void );
+LEAPI void EndDrawing( void );
 
-    // Shader functions
-    LEAPI Shader LoadShader( const char * vsFileName, const char * fsFileName );
-    LEAPI Shader LoadShaderFromMemory( const char * vsCode, const char * fsCode );
-    LEAPI void   UnloadShader( Shader shader );
-    LEAPI void   BeginShaderMode( Shader shader );
-    LEAPI void   EndShaderMode( void );
-    LEAPI int    GetShaderLocation( Shader shader, const char * uniformName );
-    LEAPI void   SetShaderValue( Shader shader, int locIndex, const void * value, int uniformType );
-    LEAPI void   SetShaderValueV( Shader shader, int locIndex, const void * value, int uniformType, int count );
+// Shader functions
+LEAPI Shader LoadShader( const char * vsFileName, const char * fsFileName );
+LEAPI Shader LoadShaderFromMemory( const char * vsCode, const char * fsCode );
+LEAPI void   UnloadShader( Shader shader );
+LEAPI void   BeginShaderMode( Shader shader );
+LEAPI void   EndShaderMode( void );
+LEAPI int    GetShaderLocation( Shader shader, const char * uniformName );
+LEAPI void   SetShaderValue( Shader shader, int locIndex, const void * value, int uniformType );
+LEAPI void   SetShaderValueV( Shader shader, int locIndex, const void * value, int uniformType, int count );
 
-    // Miscellaneous core functions
-    LEAPI void LeTraceLog( LogLevel level, const char * file, int line, const char * fmt, ... );
-    LEAPI void SetConfigFlags( unsigned int flags );
+// Miscellaneous core functions
+LEAPI void LeTraceLog( LogLevel level, const char * file, int line, const char * fmt, ... );
+LEAPI void SetConfigFlags( unsigned int flags );
 
-    //---------------------------------------------------------------------------------------------- CORE ---//
+//---------------------------------------------------------------------------------------------- CORE ---//
 
-    //--- SHAPES ------------------------------------------------------------------------------------------------
+//--- SHAPES ------------------------------------------------------------------------------------------------
 
-    // Basic shapes drawing functions
-    LEAPI void DrawPixel( int x, int y, Color color );
-    LEAPI void DrawLine( int startX, int startY, int endX, int endY, Color color );
-    LEAPI void DrawTriangle( float x1, float y1, float x2, float y2, float x3, float y3, Color color );
-    LEAPI void DrawTriangleLines( float x1, float y1, float x2, float y2, float x3, float y3, Color color );
-    LEAPI void DrawRectangle( float x, float y, float width, float height, Color color );
-    LEAPI void DrawRectangleLines( float x, float y, float width, float height, Color color );
-    LEAPI void DrawCircle( float centerX, float centerY, float radius, Color color );
-    LEAPI void DrawCircleLines( float centerX, float centerY, float radius, Color color );
+// Basic shapes drawing functions
+LEAPI void DrawPixel( int x, int y, Color color );
+LEAPI void DrawLine( int startX, int startY, int endX, int endY, Color color );
+LEAPI void DrawTriangle( float x1, float y1, float x2, float y2, float x3, float y3, Color color );
+LEAPI void DrawTriangleLines( float x1, float y1, float x2, float y2, float x3, float y3, Color color );
+LEAPI void DrawRectangle( float x, float y, float width, float height, Color color );
+LEAPI void DrawRectangleLines( float x, float y, float width, float height, Color color );
+LEAPI void DrawCircle( float centerX, float centerY, float radius, Color color );
+LEAPI void DrawCircleLines( float centerX, float centerY, float radius, Color color );
 
-    //-------------------------------------------------------------------------------------------- SHAPES ---//
+//-------------------------------------------------------------------------------------------- SHAPES ---//
 
-#if defined( __cplusplus )
-}
-#endif
+CXX_GUARD_END
 
 #endif // LEVEGL_H
