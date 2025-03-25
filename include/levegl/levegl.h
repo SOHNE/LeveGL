@@ -58,11 +58,40 @@
 #include "levegl/leapi.h"
 #include "levegl/leversion.h"
 
+#include <stdarg.h> /* va_list */
+
 //==============================================================================================================
 // DEFINES
 //==============================================================================================================
 #ifndef LEAPI
 #    define LEAPI
+#endif
+
+/// Compiler attributes
+#if defined( __GNUC__ ) || defined( __clang__ )
+#    define NORETURN      __attribute__( ( noreturn ) )
+#    define PACKED        __attribute__( ( packed ) )
+#    define INLINE        inline __attribute__( ( always_inline ) )
+#    define ALIGNED( x )  __attribute__( ( aligned( x ) ) ) // Align variables/structs
+#    define DEPRECATED    __attribute__( ( deprecated ) )   // Mark as deprecated
+#    define LIKELY( x )   __builtin_expect( !!( x ), 1 )    // Branch prediction hint
+#    define UNLIKELY( x ) __builtin_expect( !!( x ), 0 )
+#elif defined( _MSC_VER )
+#    define NORETURN      __declspec( noreturn )
+#    define PACKED        __pragma( pack( push, 1 ) )
+#    define INLINE        __forceinline
+#    define ALIGNED( x )  __declspec( align( x ) )
+#    define DEPRECATED    __declspec( deprecated )
+#    define LIKELY( x )   ( x )
+#    define UNLIKELY( x ) ( x )
+#else
+#    define NORETURN
+#    define PACKED
+#    define INLINE inline
+#    define ALIGNED( x )
+#    define DEPRECATED
+#    define LIKELY( x )   ( x )
+#    define UNLIKELY( x ) ( x )
 #endif
 
 // C++ compatibility, preventing name mangling
@@ -90,20 +119,6 @@ typedef enum bool
 #            define LEVE_BOOL_TYPE
 #        endif
 #    endif
-#endif
-
-// Logging macros
-// TODO: Implement a logging system
-#if 0 //LE_DEBUG
-#    define TRACE_LOG( level, fmt, ... ) LeTraceLog( level, __FILE__, __LINE__, fmt, ##__VA_ARGS__ )
-#    define TRACE_INFO( fmt, ... )       TRACE_LOG( LOG_INFO, fmt, ##__VA_ARGS__ )
-#    define TRACE_WARNING( fmt, ... )    TRACE_LOG( LOG_WARNING, fmt, ##__VA_ARGS__ )
-#    define TRACE_ERROR( fmt, ... )      TRACE_LOG( LOG_ERROR, fmt, ##__VA_ARGS__ )
-#else
-#    define TRACE_LOG( level, fmt, ... )
-#    define TRACE_INFO( fmt, ... )
-#    define TRACE_WARNING( fmt, ... )
-#    define TRACE_ERROR( fmt, ... )
 #endif
 
 // Predefined colors
@@ -162,6 +177,8 @@ typedef enum bool
 // String
 #define STR_NONEMPTY( str ) ( ( str ) != NULL && ( str )[0] != '\0' )
 
+#define UNUSED( x )         (void)( x )
+
 //==============================================================================================================
 // STRUCTS
 //==============================================================================================================
@@ -207,10 +224,20 @@ typedef enum
 // Log levels
 typedef enum
 {
-    LOG_INFO = 0,
-    LOG_WARNING,
-    LOG_ERROR
+    LOG_ALL = 0, // Display all logs
+    LOG_TRACE,   // Trace logging, intended for internal use only
+    LOG_DEBUG,   // Debug logging, used for internal debugging, it should be disabled on release builds
+    LOG_INFO,    // Info logging, used for program execution info
+    LOG_WARNING, // Warning logging, used on recoverable failures
+    LOG_ERROR,   // Error logging, used on unrecoverable failures
+    LOG_FATAL,   // Fatal logging, used to abort program: exit(EXIT_FAILURE)
+    LOG_NONE     // Disable logging
 } LogLevel;
+
+//===========================================================================================================
+// Functions callbacks
+//===========================================================================================================
+typedef void ( *TraceLogCallback )( int logLevel, const char * text, va_list args ); // Custom trace log
 
 //===========================================================================================================
 // FUNCTIONS DECLARATIONS
@@ -251,7 +278,9 @@ LEAPI void   SetShaderValue( Shader shader, int locIndex, const void * value, in
 LEAPI void   SetShaderValueV( Shader shader, int locIndex, const void * value, int uniformType, int count );
 
 // Miscellaneous core functions
-LEAPI void LeTraceLog( LogLevel level, const char * file, int line, const char * fmt, ... );
+LEAPI void SetTraceLogCallback( TraceLogCallback callback ); // Set custom trace log
+LEAPI void TraceLog( int logLevel, const char * text, ... ); // Display a log message
+
 LEAPI void SetConfigFlags( unsigned int flags );
 
 //---------------------------------------------------------------------------------------------- CORE ---//
