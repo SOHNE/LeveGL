@@ -29,4 +29,4 @@
 #    endif
 #endif
 
-#endif //LEVEGL_LEAPI_H
+#endif // LEVEGL_LEAPI_H

@@ -1,9 +1,10 @@
-#include <math.h>
-#include <string.h>
 #include "lecore_context.h"
+
 #include "levegl/levegl.h"
 
 #include <GL/glew.h>
+#include <math.h>
+#include <string.h>
 
 extern CoreContext core;
 
@@ -145,7 +146,7 @@ DrawPixel( int x, int y, Color color )
     UpdateVertexBuffer( vertices, sizeof( vertices ) );
 
     glBindVertexArray( shapesState.VAO );
-    //glPointSize(1.0f);
+    // glPointSize(1.0f);
     glDrawArrays( GL_POINTS, 0, 1 );
 
     EndShaderMode();

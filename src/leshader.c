@@ -1,9 +1,9 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include "levegl/levegl.h"
 
 #include <GL/glew.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 static Shader currentShader = { 0 };
 
@@ -72,8 +72,8 @@ LoadShaderFromMemory( const char * vsCode, const char * fsCode )
     GLuint vertexShader   = glCreateShader( GL_VERTEX_SHADER );
     GLuint fragmentShader = glCreateShader( GL_FRAGMENT_SHADER );
 
-    if( !CompileShader( vertexShader, vsCode, GL_VERTEX_SHADER ) ||
-        !CompileShader( fragmentShader, fsCode, GL_FRAGMENT_SHADER ) )
+    if( !CompileShader( vertexShader, vsCode, GL_VERTEX_SHADER )
+        || !CompileShader( fragmentShader, fsCode, GL_FRAGMENT_SHADER ) )
         {
             TRACE_ERROR( "Failed to compile shaders" );
             return shader;
@@ -158,21 +158,22 @@ SetShaderValue( Shader shader, int locIndex, const void * value, int uniformType
 void
 SetShaderValueV( Shader shader, int locIndex, const void * value, int uniformType, int count )
 {
-    if( shader.id == 0 || locIndex == -1 ) return;
+    if( shader.id == 0 || locIndex == -1 )
+        {
+            return;
+        }
 
     glUseProgram( shader.id );
 
     switch( uniformType )
         {
-            case GL_FLOAT:      glUniform1fv( locIndex, count, (float *)value ); break;
-            case GL_INT:        glUniform1iv( locIndex, count, (int *)value ); break;
-            case GL_FLOAT_VEC2: glUniform2fv( locIndex, count, (float *)value ); break;
-            case GL_FLOAT_VEC3: glUniform3fv( locIndex, count, (float *)value ); break;
-            case GL_FLOAT_VEC4: glUniform4fv( locIndex, count, (float *)value ); break;
-            case GL_FLOAT_MAT4:
-                glUniformMatrix4fv( locIndex, count, GL_FALSE, (float *)value );
-                break;
-            default: TRACE_WARNING( "Uniform type not supported" ); break;
+        case GL_FLOAT:      glUniform1fv( locIndex, count, (float *)value ); break;
+        case GL_INT:        glUniform1iv( locIndex, count, (int *)value ); break;
+        case GL_FLOAT_VEC2: glUniform2fv( locIndex, count, (float *)value ); break;
+        case GL_FLOAT_VEC3: glUniform3fv( locIndex, count, (float *)value ); break;
+        case GL_FLOAT_VEC4: glUniform4fv( locIndex, count, (float *)value ); break;
+        case GL_FLOAT_MAT4: glUniformMatrix4fv( locIndex, count, GL_FALSE, (float *)value ); break;
+        default:            TRACE_WARNING( "Uniform type not supported" ); break;
         }
 
     if( shader.id != currentShader.id )

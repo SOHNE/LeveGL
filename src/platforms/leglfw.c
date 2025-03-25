@@ -2,15 +2,14 @@
 // INCLUDES
 //==============================================================================================================
 #include "lecore_context.h"
+
 #include "levegl/levegl.h"
 
-#include <string.h>
-
 #include <GL/glew.h>
+#include <string.h>
 
 #define GLFW_INCLUDE_NONE
 #include "GLFW/glfw3.h"
-
 #include "GLFW/glfw3native.h"
 
 //==============================================================================================================
@@ -18,7 +17,7 @@
 //==============================================================================================================
 typedef struct PlatformContext
 {
-    GLFWwindow* handle;
+    GLFWwindow * handle;
 } PlatformContext;
 
 //==============================================================================================================
@@ -36,8 +35,7 @@ extern void InitShapes( void );
 extern void CleanupShapes( void );
 
 // GLFW callbacks and window management
-static void FramebufferSizeCallback( GLFWwindow* window, int width,
-                                     int height );
+static void FramebufferSizeCallback( GLFWwindow * window, int width, int height );
 
 //==============================================================================================================
 // MODULE FUNCTIONS DEFINITIONS
@@ -45,8 +43,8 @@ static void FramebufferSizeCallback( GLFWwindow* window, int width,
 int
 InitPlatform()
 {
-    TRACE_INFO( "Initializing window: %s (%dx%d)", core.window.title,
-                core.window.screen.width, core.window.screen.height );
+    TRACE_INFO( "Initializing window: %s (%dx%d)", core.window.title, core.window.screen.width,
+                core.window.screen.height );
 
     if( !glfwInit() )
         {
@@ -66,19 +64,14 @@ InitPlatform()
 
     // Apply window hints based on our flag configuration:
     // Set whether the window should be resizable.
-    glfwWindowHint( GLFW_RESIZABLE,
-                    FLAG_CHECK( core.window.flags, FLAG_WINDOW_RESIZABLE )
-                        ? GL_TRUE
-                        : GL_FALSE );
+    glfwWindowHint( GLFW_RESIZABLE, FLAG_CHECK( core.window.flags, FLAG_WINDOW_RESIZABLE ) ? GL_TRUE : GL_FALSE );
 
     // Configure MSAA (multi-sample anti-aliasing) sample count.
-    glfwWindowHint( GLFW_SAMPLES,
-                    FLAG_CHECK( core.window.flags, FLAG_MSAA_HINT ) ? 4 : 0 );
+    glfwWindowHint( GLFW_SAMPLES, FLAG_CHECK( core.window.flags, FLAG_MSAA_HINT ) ? 4 : 0 );
 
     // Create the window.
-    platform.handle =
-        glfwCreateWindow( core.window.screen.width, core.window.screen.height,
-                          core.window.title, NULL, NULL );
+    platform.handle
+        = glfwCreateWindow( core.window.screen.width, core.window.screen.height, core.window.title, NULL, NULL );
     if( !platform.handle )
         {
             TRACE_ERROR( "Failed to create GLFW window" );
@@ -91,8 +84,7 @@ InitPlatform()
     GLenum err = glewInit();
     if( err != GLEW_OK )
         {
-            TRACE_ERROR( "Failed to initialize GLEW: %s",
-                         glewGetErrorString( err ) );
+            TRACE_ERROR( "Failed to initialize GLEW: %s", glewGetErrorString( err ) );
             glfwTerminate();
             return -1;
         }
@@ -102,8 +94,7 @@ InitPlatform()
     glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
 
     // Set VSync based on our flag configuration.
-    glfwSwapInterval( FLAG_CHECK( core.window.flags, FLAG_VSYNC_HINT ) ? 1
-                                                                       : 0 );
+    glfwSwapInterval( FLAG_CHECK( core.window.flags, FLAG_VSYNC_HINT ) ? 1 : 0 );
 
     // Configure timing settings.
     core.timing.targetFPS     = 60;
@@ -140,7 +131,7 @@ ShouldQuit( void )
 }
 
 void
-SetWindowTitle( const char* title )
+SetWindowTitle( const char * title )
 {
     core.window.title = title;
     glfwSetWindowTitle( platform.handle, title );
@@ -162,7 +153,9 @@ void
 WaitTime( double seconds )
 {
     if( 0.0 >= seconds )
-        return;
+        {
+            return;
+        }
 
     double start   = GetTime();
     double elapsed = 0.0;
@@ -191,14 +184,14 @@ GetScreenHeight( void )
     return height;
 }
 
-void*
+void *
 GetWindowHandle( void )
 {
-    return (void*)platform.handle;
+    return (void *)platform.handle;
 }
 
 static void
-FramebufferSizeCallback( GLFWwindow* window, int width, int height )
+FramebufferSizeCallback( GLFWwindow * window, int width, int height )
 {
     glViewport( 0, 0, width, height );
     core.window.screen.width  = width;
