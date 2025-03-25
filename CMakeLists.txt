@@ -58,11 +58,13 @@ CPMAddPackage("gh:TheLartians/GroupSourcesByFolder.cmake@1.0")
 
 include(cmake/tools.cmake)
 
-list(APPEND LEVE_INCLUDE_DIR)
-list(APPEND LEVE_LINK_DEPS)
+set(LEVE_INCLUDE_DEPS_DIR "")
+set(LEVE_LINK_DEPS "")
 
 include(cmake/deps/glew.cmake)
 include(cmake/deps/glfw.cmake)
+
+list(APPEND LEVE_INCLUDE_DEPS_DIR "${PROJECT_SOURCE_DIR}/external")
 
 # --------------------------------------------------------------------
 # Global Properties
