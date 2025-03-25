@@ -61,7 +61,6 @@ include(cmake/tools.cmake)
 set(LEVE_INCLUDE_DEPS_DIR "")
 set(LEVE_LINK_DEPS "")
 
-include(cmake/deps/glew.cmake)
 include(cmake/deps/glfw.cmake)
 
 list(APPEND LEVE_INCLUDE_DEPS_DIR "${PROJECT_SOURCE_DIR}/external")
@@ -92,7 +91,7 @@ packageProject(
   VERSION_HEADER "${VERSION_HEADER_LOCATION}"
   EXPORT_HEADER "${EXPORT_HEADER_LOCATION}"
   COMPATIBILITY SameMajorVersion
-  DEPENDENCIES "Ccache 1.2.5;GLEW glew-cmake-2.2.0;GLFW 3.4"
+  DEPENDENCIES "Ccache 1.2.5;GLFW 3.4"
 )
 
 unset(VERSION_HEADER_LOCATION)

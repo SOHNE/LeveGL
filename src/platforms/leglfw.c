@@ -3,10 +3,8 @@
 //==============================================================================================================
 #include "lecore_context.h"
 
+#include "levegl/leutils.h"
 #include "levegl/levegl.h"
-
-#include <GL/glew.h>
-#include <string.h>
 
 #define GLFW_INCLUDE_NONE
 #include "GLFW/glfw3.h"
@@ -43,12 +41,12 @@ static void FramebufferSizeCallback( GLFWwindow * window, int width, int height 
 int
 InitPlatform()
 {
-    TRACE_INFO( "Initializing window: %s (%dx%d)", core.window.title, core.window.screen.width,
-                core.window.screen.height );
+    TRACELOG( LOG_INFO, "Initializing window: %s (%dx%d)", core.window.title, core.window.screen.width,
+              core.window.screen.height );
 
     if( !glfwInit() )
         {
-            TRACE_ERROR( "Failed to initialize GLFW" );
+            TRACELOG( LOG_ERROR, "Failed to initialize GLFW" );
             return -1;
         }
 
@@ -59,12 +57,12 @@ InitPlatform()
     glfwWindowHint( GLFW_CONTEXT_VERSION_MINOR, 3 );
     glfwWindowHint( GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE );
 #ifdef __APPLE__
-    glfwWindowHint( GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE );
+    glfwWindowHint( GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE );
 #endif
 
     // Apply window hints based on our flag configuration:
     // Set whether the window should be resizable.
-    glfwWindowHint( GLFW_RESIZABLE, FLAG_CHECK( core.window.flags, FLAG_WINDOW_RESIZABLE ) ? GL_TRUE : GL_FALSE );
+    glfwWindowHint( GLFW_RESIZABLE, FLAG_CHECK( core.window.flags, FLAG_WINDOW_RESIZABLE ) ? GLFW_TRUE : GLFW_FALSE );
 
     // Configure MSAA (multi-sample anti-aliasing) sample count.
     glfwWindowHint( GLFW_SAMPLES, FLAG_CHECK( core.window.flags, FLAG_MSAA_HINT ) ? 4 : 0 );
@@ -74,24 +72,14 @@ InitPlatform()
         = glfwCreateWindow( core.window.screen.width, core.window.screen.height, core.window.title, NULL, NULL );
     if( !platform.handle )
         {
-            TRACE_ERROR( "Failed to create GLFW window" );
+            TRACELOG( LOG_ERROR, "Failed to create GLFW window" );
             glfwTerminate();
             return -1;
         }
 
     glfwMakeContextCurrent( platform.handle );
 
-    GLenum err = glewInit();
-    if( err != GLEW_OK )
-        {
-            TRACE_ERROR( "Failed to initialize GLEW: %s", glewGetErrorString( err ) );
-            glfwTerminate();
-            return -1;
-        }
-
     InitShapes();
-    glEnable( GL_BLEND );
-    glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
 
     // Set VSync based on our flag configuration.
     glfwSwapInterval( FLAG_CHECK( core.window.flags, FLAG_VSYNC_HINT ) ? 1 : 0 );
@@ -102,7 +90,7 @@ InitPlatform()
 
     glfwSetFramebufferSizeCallback( platform.handle, FramebufferSizeCallback );
 
-    TRACE_INFO( "Window initialized successfully" );
+    TRACELOG( LOG_INFO, "Window initialized successfully" );
     return 0;
 }
 
@@ -193,8 +181,8 @@ GetWindowHandle( void )
 static void
 FramebufferSizeCallback( GLFWwindow * window, int width, int height )
 {
-    glViewport( 0, 0, width, height );
+    //glViewport( 0, 0, width, height );
     core.window.screen.width  = width;
     core.window.screen.height = height;
-    TRACE_INFO( "Window resized to %dx%d", width, height );
+    TRACELOG( LOG_INFO, "Window resized to %dx%d", width, height );
 }

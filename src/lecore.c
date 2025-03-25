@@ -39,13 +39,16 @@
 //==============================================================================================================
 // INCLUDES
 //==============================================================================================================
-#include "GL/glew.h"
 #include "lecore_context.h"
 
+#include "levegl/leutils.h"
 #include "levegl/levegl.h"
 
 #include <math.h>
 #include <string.h>
+
+// Platforms
+#include "platforms/leglfw.c"
 
 //==============================================================================================================
 // GLOBALS
@@ -67,7 +70,7 @@ extern void CleanupShapes( void );
 void
 InitWindow( int width, int height, const char * title )
 {
-    TRACE_INFO( "Initializing LeveGL - %s", LEVEGL_VERSION );
+    TRACELOG( LOG_INFO, "Initializing LeveGL - %s", LEVEGL_VERSION );
 
     core.window.screen.height = height;
     core.window.screen.width  = width;
@@ -85,7 +88,7 @@ CloseWindow()
     ClosePlatform();
     memset( &core, 0, sizeof( core ) );
 
-    TRACE_INFO( "Window closed" );
+    TRACELOG( LOG_INFO, "Window closed" );
 }
 
 void
@@ -134,8 +137,6 @@ EndDrawing( void )
 void
 ClearBackground( Color color )
 {
-    glClearColor( color.r / 255.0f, color.g / 255.0f, color.b / 255.0f, color.a / 255.0f );
-    glClear( GL_COLOR_BUFFER_BIT );
 }
 
 float

@@ -6,10 +6,13 @@ include(OpenGLConfigurations)
 set(LEVE_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/include/levegl)
 set(LEVE_SOURCE_DIR ${PROJECT_SOURCE_DIR}/src)
 
-list(APPEND LEVE_HEADER_FILES
-  ${LEVE_INCLUDE_DIR}/levegl.h
+list(APPEND LEVE_PUBLIC_HEADER_FILES
   ${LEVE_INCLUDE_DIR}/leapi.h
+  ${LEVE_INCLUDE_DIR}/leutils.h
+  ${LEVE_INCLUDE_DIR}/levegl.h
+)
 
+list(APPEND LEVE_PRIVATE_HEADER_FILES
   ${LEVE_SOURCE_DIR}/lecore_context.h
 )
 
@@ -18,17 +21,22 @@ list(APPEND LEVE_SOURCE_FILES
   ${LEVE_SOURCE_DIR}/lecore.c
   ${LEVE_SOURCE_DIR}/leshader.c
   ${LEVE_SOURCE_DIR}/leshapes.c
+  ${LEVE_SOURCE_DIR}/leutils.c
 )
-
-# Add platform-specific
-if(PLATFORM STREQUAL "Desktop")
-  list(APPEND LEVE_SOURCE_FILES ${LEVE_SOURCE_DIR}/platforms/leglfw.c)
-endif()
 
 #--------------------------------------------------------------------
 # Library Setup
 #--------------------------------------------------------------------
-add_library(${PROJECT_NAME} ${LEVE_SOURCE_FILES} ${LEVE_HEADER_FILES})
+add_library(${PROJECT_NAME}
+    # Public headers
+    ${LEVE_PUBLIC_HEADER_FILES}
+
+    # Source files
+    ${LEVE_SOURCE_FILES}
+
+    # Private headers
+    ${LEVE_PRIVATE_HEADER_FILES}
+)
 
 # Link libraries
 setup_opengl_target(${PROJECT_NAME})
@@ -45,16 +53,16 @@ target_include_directories(${PROJECT_NAME}
     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include/${PROJECT_NAME}-${PROJECT_VERSION}>
   PRIVATE
-    ${LEVE_INCLUDE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}
+    "${LEVE_INCLUDE_DEPS_DIR}"
 )
 
 #--------------------------------------------------------------------
 # Target Properties
 #--------------------------------------------------------------------
 set_target_properties(${PROJECT_NAME}
-    PROPERTIES
-        PUBLIC_HEADER ${LEVE_INCLUDE_DIR}/levegl.h
+PROPERTIES
+        PUBLIC_HEADER "${LEVE_PUBLIC_HEADER_FILES}"
         VERSION ${PROJECT_VERSION}
         SOVERSION ${PROJECT_VERSION_MAJOR}
         C_EXTENSIONS OFF
@@ -65,18 +73,17 @@ set_target_properties(${PROJECT_NAME}
 #--------------------------------------------------------------------
 # Compile definitions
 #--------------------------------------------------------------------
-if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-  target_compile_definitions(${PROJECT_NAME} PUBLIC LE_DEBUG)
-elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
-  target_compile_definitions(${PROJECT_NAME} PUBLIC LE_RELEASE)
-endif()
+target_compile_definitions(${PROJECT_NAME} PUBLIC
+    $<$<CONFIG:Debug>:LE_DEBUG>
+    $<$<CONFIG:Release>:LE_RELEASE>
+)
 
-if(BUILD_SHARED_LIBS)
-  message(STATUS "Building shared library")
-  target_compile_definitions(${PROJECT_NAME} PUBLIC LEVEGL_SHARED_DEFINE)
-else()
-  target_compile_definitions(${PROJECT_NAME} PUBLIC LEVEGL_STATIC_DEFINE)
-endif()
+target_compile_definitions(${PROJECT_NAME} PUBLIC
+    $<$<BOOL:${BUILD_SHARED_LIBS}>:LE_SHARED>
+    $<$<NOT:$<BOOL:${BUILD_SHARED_LIBS}>>:LE_STATIC>
+)
+
+target_compile_definitions(${PROJECT_NAME} PUBLIC $<$<BOOL:${LOG_SUPPORT}>:LOG_SUPPORT>)
 
 target_compile_definitions(${PROJECT_NAME} PUBLIC "${PLATFORM_BACKEND}")
 target_compile_definitions(${PROJECT_NAME} PUBLIC "${GRAPHICS}")
