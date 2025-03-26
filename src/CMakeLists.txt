@@ -8,6 +8,7 @@ set(LEVE_SOURCE_DIR ${PROJECT_SOURCE_DIR}/src)
 
 list(APPEND LEVE_PUBLIC_HEADER_FILES
   ${LEVE_INCLUDE_DIR}/leapi.h
+  ${LEVE_INCLUDE_DIR}/legl.h
   ${LEVE_INCLUDE_DIR}/leutils.h
   ${LEVE_INCLUDE_DIR}/levegl.h
 )
@@ -23,6 +24,18 @@ list(APPEND LEVE_SOURCE_FILES
   ${LEVE_SOURCE_DIR}/leshapes.c
   ${LEVE_SOURCE_DIR}/leutils.c
 )
+
+# Add platform-specific
+if(PLATFORM STREQUAL "Desktop")
+    set(platform_file "leglfw.c")
+elseif(PLATFORM STREQUAL "Web")
+    set(platform_file "leweb.c")
+else()
+    message(FATAL_ERROR "Unsupported platform: ${PLATFORM}")
+endif()
+
+list(APPEND LEVE_SOURCE_FILES "${LEVE_SOURCE_DIR}/platforms/${platform_file}")
+
 
 #--------------------------------------------------------------------
 # Library Setup
