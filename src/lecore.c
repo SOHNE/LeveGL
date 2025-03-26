@@ -44,11 +44,12 @@
 #include "levegl/leutils.h"
 #include "levegl/levegl.h"
 
+#define LEGL_IMPLEMENTATION
+#include "levegl/legl.h"
+#undef LEGL_IMPLEMENTATION
+
 #include <math.h>
 #include <string.h>
-
-// Platforms
-#include "platforms/leglfw.c"
 
 //==============================================================================================================
 // GLOBALS
@@ -137,6 +138,8 @@ EndDrawing( void )
 void
 ClearBackground( Color color )
 {
+    leClearColor( color.r, color.g, color.b, color.a );
+    leClearScreenBuffers();
 }
 
 float
