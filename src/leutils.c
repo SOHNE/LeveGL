@@ -27,7 +27,7 @@
 #include "levegl/levegl.h"
 
 #include <stdarg.h> /* va_start, va_end, va_list */
-#include <stdio.h>  /* fprintf, vfprintf, stderr */
+#include <stdio.h>  /* fprintf, vfprintf, stdout */
 #include <stdlib.h> /* abort */
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -88,9 +88,9 @@ TraceLog( int logType, const char * text, ... )
         }
 
     // Print log message
-    fprintf( stderr, "[%s] ", levelString );
-    vfprintf( stderr, text, args );
-    fprintf( stderr, "\n" );
+    fprintf( stdout, "[%s] ", levelString );
+    vfprintf( stdout, text, args );
+    fprintf( stdout, "\n" );
 
     va_end( args );
 
