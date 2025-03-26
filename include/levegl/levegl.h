@@ -122,30 +122,31 @@ typedef enum bool
 #endif
 
 // Predefined colors
-#define BLACK     ( Color ) { 0, 0, 0, 255 }
-#define WHITE     ( Color ) { 255, 255, 255, 255 }
-#define GRAY      ( Color ) { 128, 128, 128, 255 }
-#define DARKGRAY  ( Color ) { 64, 64, 64, 255 }
-#define LIGHTGRAY ( Color ) { 192, 192, 192, 255 }
+#define BLACK     ( Color ) { 000.F / 255.F, 000.F / 255.F, 000.F / 255.F, 1.F }
+#define WHITE     ( Color ) { 255.F / 255.F, 255.F / 255.F, 255.F / 255.F, 1.F }
+#define GRAY      ( Color ) { 128.F / 255.F, 128.F / 255.F, 128.F / 255.F, 1.F }
+#define DARKGRAY  ( Color ) { 064.F / 255.F, 064.F / 255.F, 064.F / 255.F, 1.F }
+#define LIGHTGRAY ( Color ) { 192.F / 255.F, 192.F / 255.F, 192.F / 255.F, 1.F }
+
+#define RED       ( Color ) { 255.F / 255.F, 000.F / 255.F, 000.F / 255.F, 1.F }
+#define GREEN     ( Color ) { 000.F / 255.F, 255.F / 255.F, 000.F / 255.F, 1.F }
+#define BLUE      ( Color ) { 000.F / 255.F, 000.F / 255.F, 255.F / 255.F, 1.F }
+
+#define YELLOW    ( Color ) { 255.F / 255.F, 255.F / 255.F, 000.F / 255.F, 1.F }
+#define ORANGE    ( Color ) { 255.F / 255.F, 165.F / 255.F, 000.F / 255.F, 1.F }
+#define PURPLE    ( Color ) { 128.F / 255.F, 000.F / 255.F, 128.F / 255.F, 1.F }
+#define PINK      ( Color ) { 255.F / 255.F, 192.F / 255.F, 203.F / 255.F, 1.F }
+#define BROWN     ( Color ) { 165.F / 255.F, 042.F / 255.F, 042.F / 255.F, 1.F }
+#define MAGENTA   ( Color ) { 255.F / 255.F, 000.F / 255.F, 255.F / 255.F, 1.F }
+#define CYAN      ( Color ) { 000.F / 255.F, 255.F / 255.F, 255.F / 255.F, 1.F }
+#define LIME      ( Color ) { 150.F / 255.F, 255.F / 255.F, 000.F / 255.F, 1.F }
+#define MAROON    ( Color ) { 128.F / 255.F, 000.F / 255.F, 000.F / 255.F, 1.F }
+#define NAVY      ( Color ) { 000.F / 255.F, 000.F / 255.F, 128.F / 255.F, 1.F }
+
+// Colors alias
 #define GREY      GRAY
 #define DARKGREY  DARKGRAY
 #define LIGHTGREY LIGHTGRAY
-
-#define RED       ( Color ) { 255, 0, 0, 255 }
-#define GREEN     ( Color ) { 0, 255, 0, 255 }
-#define BLUE      ( Color ) { 0, 0, 255, 255 }
-
-#define YELLOW    ( Color ) { 255, 255, 0, 255 }
-#define ORANGE    ( Color ) { 255, 165, 0, 255 }
-#define PURPLE    ( Color ) { 128, 0, 128, 255 }
-
-#define PINK      ( Color ) { 255, 192, 203, 255 }
-#define BROWN     ( Color ) { 165, 42, 42, 255 }
-#define MAGENTA   ( Color ) { 255, 0, 255, 255 }
-#define CYAN      ( Color ) { 0, 255, 255, 255 }
-#define LIME      ( Color ) { 150, 255, 0, 255 }
-#define MAROON    ( Color ) { 128, 0, 0, 255 }
-#define NAVY      ( Color ) { 0, 0, 128, 255 }
 
 // TODO: Design and implement lemath.h
 #ifndef PI
@@ -186,10 +187,10 @@ typedef enum bool
 // Color
 typedef struct Color
 {
-    unsigned char r;
-    unsigned char g;
-    unsigned char b;
-    unsigned char a;
+    float r;
+    float g;
+    float b;
+    float a;
 } Color;
 
 // Transform
