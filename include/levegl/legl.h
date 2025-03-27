@@ -99,7 +99,6 @@ leLoadExtensions( void * loaderPtr )
             TRACELOG( LOG_INFO, "GLAD: OpenGL 3.3 extensions loaded" );
         }
 #    endif // GRAPHICS_API_OPENGL_33
-
 #    if defined( GRAPHICS_API_OPENGL_ES2 )
     if( 0 == gladLoadGLES2( (GLADloadfunc)loaderPtr ) )
         {
@@ -118,6 +117,19 @@ leLoadExtensions( void * loaderPtr )
         TRACELOG( LOG_INFO, "  - Renderer: %s", glGetString( GL_RENDERER ) );
         TRACELOG( LOG_INFO, "  - Version : %s", glGetString( GL_VERSION ) );
         TRACELOG( LOG_INFO, "  - GLSL    : %s", glGetString( GL_SHADING_LANGUAGE_VERSION ) );
+
+        /* Log extensions */
+        GLint numExtensions = 0;
+        glGetIntegerv( GL_NUM_EXTENSIONS, &numExtensions );
+#    if defined( SHOW_EXTENSIONS )
+        TRACELOG( LOG_INFO, "Supported OpenGL Extensions (%d):", numExtensions );
+
+        for( GLint i = 0; i < numExtensions; ++i )
+            {
+                const char * extensionName = (const char *)glGetStringi( GL_EXTENSIONS, i );
+                TRACELOG( LOG_INFO, "  - %s", extensionName );
+            }
+#    endif // SHOW_EXTENSIONS
     }
 }
 
