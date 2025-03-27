@@ -107,6 +107,15 @@ leLoadExtensions( void * loaderPtr )
             TRACELOG( LOG_INFO, "GLAD: OpenGL ES 2.0 loaded successfully" );
         }
 #    endif // GRAPHICS_API_OPENGL_ES2
+
+    /* Display OpenGL and GLSL information */
+    {
+        TRACELOG( LOG_INFO, "OpenGL Device Information:" );
+        TRACELOG( LOG_INFO, "  - Vendor  : %s", glGetString( GL_VENDOR ) );
+        TRACELOG( LOG_INFO, "  - Renderer: %s", glGetString( GL_RENDERER ) );
+        TRACELOG( LOG_INFO, "  - Version : %s", glGetString( GL_VERSION ) );
+        TRACELOG( LOG_INFO, "  - GLSL    : %s", glGetString( GL_SHADING_LANGUAGE_VERSION ) );
+    }
 }
 
 // Clear the color buffer with the provided color values
