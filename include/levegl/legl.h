@@ -65,8 +65,9 @@ LEAPI void leViewport( int x, int y, int width, int height );  // Set the viewpo
 // Module Implementation
 //
 //**********************************************************************************************************************
-#if defined( LEGL_IMPLEMENTATION )
+#ifdef LEGL_IMPLEMENTATION
 
+/* Include OpenGL related */
 #    if defined( GRAPHICS_API_OPENGL_33 )
 #        define GLAD_GL_IMPLEMENTATION
 #        include "glad/gl.h"
@@ -75,9 +76,11 @@ LEAPI void leViewport( int x, int y, int width, int height );  // Set the viewpo
 #        include "glad/gles2.h"
 #    endif
 
-// TODO: Make usage of only necessary declarations
-#    include "levegl/leutils.h"
-#    include "levegl/levegl.h"
+/* Ensure TRACE macros */
+#    if false == defined( TRACELOG )
+#        define TRACELOG( level, ... ) ( (void)( 0 ) )
+#        define TRACELOGD( ... )       ( (void)( 0 ) )
+#    endif // !TRACELOG
 
 //----------------------------------------------------------------------------------------------------------------------
 // Module Functions Definitions
