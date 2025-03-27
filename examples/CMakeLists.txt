@@ -21,20 +21,18 @@ CPMAddPackage(NAME LeveGL SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/..)
 CPMAddPackage("gh:TheLartians/GroupSourcesByFolder.cmake@1.0")
 
 # --------------------------------------------------------------------
-# Find all examples.c files
+# Find all examples files recursively
 # --------------------------------------------------------------------
-file(GLOB EXAMPLE_SOURCE_FILES "${CMAKE_CURRENT_SOURCE_DIR}/*.c")
+file(GLOB_RECURSE EXAMPLE_SOURCE_FILES
+    CONFIGURE_DEPENDS
+    "${CMAKE_CURRENT_SOURCE_DIR}/*.c"
+)
 
 foreach(SOURCE_FILE ${EXAMPLE_SOURCE_FILES})
     # Get the filename without extension
     get_filename_component(EXECUTABLE_NAME ${SOURCE_FILE} NAME_WE)
 
     add_executable(${EXECUTABLE_NAME} ${SOURCE_FILE})
-
-    # target_include_directories(${EXECUTABLE_NAME}
-    #     PUBLIC
-    #       ${CMAKE_CURRENT_SOURCE_DIR}/include
-    # )
 
     # Link LeveGL
     target_link_libraries(${EXECUTABLE_NAME} PUBLIC LeveGL::LeveGL)
@@ -47,22 +45,11 @@ foreach(SOURCE_FILE ${EXAMPLE_SOURCE_FILES})
         target_link_options(${EXECUTABLE_NAME} PUBLIC -static -static-libgcc -static-libstdc++)
     endif()
 
-  if(EMSCRIPTEN)
+    if(EMSCRIPTEN)
         set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --emrun -s USE_GLFW=3 -s ASSERTIONS=1 -s WASM=1 -s ASYNCIFY -s GL_ENABLE_GET_PROC_ADDRESS=1 -s ALLOW_MEMORY_GROWTH")
         set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3")
         set_target_properties(${EXECUTABLE_NAME} PROPERTIES SUFFIX ".html")
         # set_target_properties(${EXECUTABLE_NAME} PROPERTIES OUTPUT_NAME "index")
-    endif()
-
-    if(APPLE)
-        list(APPEND APPLE_FRAMEWORKS
-            "-framework OpenGL"
-            "-framework CoreFoundation"
-            "-framework CoreVideo"
-            "-framework IOKit"
-            "-framework Cocoa"
-        )
-        target_link_libraries(${EXECUTABLE_NAME} PRIVATE ${APPLE_FRAMEWORKS})
     endif()
 
     # Group sources
