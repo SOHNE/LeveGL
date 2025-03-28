@@ -133,6 +133,8 @@ EndDrawing( void )
 
     core.timing.lastFrameTime = GetTime();
     ++core.timing.frameCounter;
+
+    PollInputEvents();
 }
 
 void
@@ -156,4 +158,61 @@ int
 GetFPS( void )
 {
     return (int)roundf( 1.0f / GetFrameTime() );
+}
+
+//----------------------------------------------------------------------------------------------------------------------
+// Module: Input
+//----------------------------------------------------------------------------------------------------------------------
+// Check if any key is been pressed
+INLINE bool
+IsAnyKeyPressed( void )
+{
+    NO_IMPL();
+
+    return false;
+}
+
+// Check if the given key is been pressed
+INLINE bool
+IsKeyPressed( int key )
+{
+    if( UNLIKELY( KEY_NULL >= key || KEYBOARD_KEY_COUNT <= key ) ) return false;
+
+    return ( !core.input.keyboard.prevKeyState[key] && core.input.keyboard.currKeyState[key] );
+}
+
+// Check if the given key is repeated across frames
+INLINE bool
+IsKeyPressedRepeated( int key )
+{
+    if( UNLIKELY( KEY_NULL >= key || KEYBOARD_KEY_COUNT <= key ) ) return false;
+
+    return (bool)core.input.keyboard.keyRepeats[key];
+}
+
+// Check if the given key is being pressed
+INLINE bool
+IsKeyDown( int key )
+{
+    if( UNLIKELY( KEY_NULL >= key || KEYBOARD_KEY_COUNT <= key ) ) return false;
+
+    return (bool)core.input.keyboard.currKeyState[key];
+}
+
+// Check if the given key has been released once
+INLINE bool
+IsKeyReleased( int key )
+{
+    if( UNLIKELY( KEY_NULL >= key || KEYBOARD_KEY_COUNT <= key ) ) return false;
+
+    return ( core.input.keyboard.prevKeyState[key] && !core.input.keyboard.currKeyState[key] );
+}
+
+// Check if the key is NOT being pressed
+INLINE bool
+IsKeyUp( int key )
+{
+    if( UNLIKELY( KEY_NULL >= key || KEYBOARD_KEY_COUNT <= key ) ) return false;
+
+    return false == core.input.keyboard.currKeyState[key];
 }

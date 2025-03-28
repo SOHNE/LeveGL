@@ -34,6 +34,7 @@ int         InitPlatform();
 extern void InitShapes( void );
 extern void CleanupShapes( void );
 static void FramebufferSizeCallback( GLFWwindow * window, int width, int height );
+static void KeyCallback( GLFWwindow * window, int key, int scancode, int action, int mods );
 
 //==============================================================================================================
 // MISSING GETTIME IMPLEMENTATION
@@ -83,6 +84,7 @@ InitPlatform()
     core.timing.lastFrameTime = GetTime();
 
     glfwSetFramebufferSizeCallback( platform.handle, FramebufferSizeCallback );
+    glfwSetKeyCallback( platform.handle, KeyCallback );
 
     TRACELOG( LOG_INFO, "Window initialized successfully" );
     return 0;
@@ -130,4 +132,61 @@ FramebufferSizeCallback( GLFWwindow * window, int width, int height )
     core.window.screen.width  = width;
     core.window.screen.height = height;
     TRACELOG( LOG_INFO, "Window resized to %dx%d", width, height );
+}
+
+static void
+KeyCallback( GLFWwindow * window, int key, int scancode, int action, int mods )
+{
+    // Filter invalid key codes
+    if( UNLIKELY( KEY_NULL > key ) ) return;
+
+    switch( action )
+        {
+        case GLFW_RELEASE:
+            {
+                // Clear key state immediately on release
+                core.input.keyboard.currKeyState[key] = 0;
+                break;
+            }
+        case GLFW_PRESS:
+            {
+                // Update state and record press event
+                core.input.keyboard.currKeyState[key] = 1;
+                ++core.input.keyboard.pressedKeyCount;
+                break;
+            }
+        case GLFW_REPEAT:
+            {
+                // Track sustained key repeats
+                core.input.keyboard.keyRepeats[key] = 1;
+                break;
+            }
+        }
+
+    // Force lock keys to active state when modifiers match
+    if( ( KEY_CAPS_LOCK == key && ( mods & GLFW_MOD_CAPS_LOCK ) )
+        || ( KEY_NUM_LOCK == key && ( mods & GLFW_MOD_NUM_LOCK ) ) )
+        {
+            core.input.keyboard.currKeyState[key] = 1;
+        }
+}
+
+void
+PollInputEvents( void )
+{
+    /* Store previous states */
+    for( size_t i = 0; i < KEYBOARD_KEY_COUNT; ++i )
+        {
+            core.input.keyboard.prevKeyState[i] = core.input.keyboard.currKeyState[i];
+            core.input.keyboard.keyRepeats[i]   = 0;
+        }
+
+    /* Clear states */
+    core.input.keyboard.pressedKeyCount = 0;
+
+    /* Poll events */
+    // TODO: Implement an event waiter to correctly store pressed keys when drawing is paused
+    glfwPollEvents();
+
+    glfwSetWindowShouldClose( platform.handle, GLFW_FALSE );
 }

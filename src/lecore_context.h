@@ -24,6 +24,10 @@
 #ifndef LEVEGL_CORE_CONTEXT_H
 #define LEVEGL_CORE_CONTEXT_H
 
+#ifndef KEYBOARD_KEY_COUNT
+#    define KEYBOARD_KEY_COUNT 512 // The maximum number of supported keyboard keys
+#endif
+
 typedef struct Coordinate
 {
     int x;
@@ -57,6 +61,20 @@ typedef struct CoreContext
         unsigned int frameCounter;
 
     } timing;
+
+    struct input
+    {
+        struct keyboard
+        {
+            char currKeyState[KEYBOARD_KEY_COUNT]; // Current frame's key states
+            char prevKeyState[KEYBOARD_KEY_COUNT]; // Previous frame's key states
+            char keyRepeats[KEYBOARD_KEY_COUNT];   // Key repeat states for current frame
+
+            int pressedKeyCount;                   // Number of pressed keys
+
+        } keyboard;
+
+    } input;
 
 } CoreContext;
 
