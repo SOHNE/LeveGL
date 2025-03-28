@@ -41,8 +41,8 @@
 //==============================================================================================================
 #include "lecore_context.h"
 
-#include "levegl/leutils.h"
 #include "levegl/levegl.h"
+#include "levegl/leutils.h"
 
 #define LEGL_IMPLEMENTATION
 #include "levegl/legl.h"
