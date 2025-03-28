@@ -88,19 +88,20 @@ PROPERTIES
 # Compile definitions
 #--------------------------------------------------------------------
 target_compile_definitions(${PROJECT_NAME} PUBLIC
+    # Build Type
     $<$<CONFIG:Debug>:LE_DEBUG>
     $<$<CONFIG:Release>:LE_RELEASE>
+
+    # leCore
+    "${PLATFORM_BACKEND}"
+
+    # Log/Debug
+    $<$<BOOL:${LOG_SUPPORT}>:LOG_SUPPORT>
+
+    # leGL
+    "${GRAPHICS}"
+    $<$<BOOL:${LEGL_SHOW_GL_INFO}>:LEGL_SHOW_GL_INFO>
 )
-
-target_compile_definitions(${PROJECT_NAME} PUBLIC
-    $<$<BOOL:${BUILD_SHARED_LIBS}>:LE_SHARED>
-    $<$<NOT:$<BOOL:${BUILD_SHARED_LIBS}>>:LE_STATIC>
-)
-
-target_compile_definitions(${PROJECT_NAME} PUBLIC $<$<BOOL:${LOG_SUPPORT}>:LOG_SUPPORT>)
-
-target_compile_definitions(${PROJECT_NAME} PUBLIC "${PLATFORM_BACKEND}")
-target_compile_definitions(${PROJECT_NAME} PUBLIC "${GRAPHICS}")
 
 #--------------------------------------------------------------------
 # Source Groups
