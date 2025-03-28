@@ -21,8 +21,6 @@ list(APPEND LEVE_SOURCE_FILES
   # Modules
   ${LEVE_SOURCE_DIR}/lecore.c
   ${LEVE_SOURCE_DIR}/leinput.c
-  ${LEVE_SOURCE_DIR}/leshader.c
-  ${LEVE_SOURCE_DIR}/leshapes.c
   ${LEVE_SOURCE_DIR}/leutils.c
 )
 
