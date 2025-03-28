@@ -33,14 +33,14 @@
 //----------------------------------------------------------------------------------------------------------------------
 // Variables Definition
 //----------------------------------------------------------------------------------------------------------------------
-static LogLevel         logLevel = LOG_INFO; // Current log level
+static int              logLevel = LOG_INFO; // Current log level
 static TraceLogCallback traceLog = NULL;     // Custom trace log function
 
 //----------------------------------------------------------------------------------------------------------------------
 // Callbacks
 //----------------------------------------------------------------------------------------------------------------------
 // Set a custom trace log callback
-INLINE void
+void
 SetTraceLogCallback( TraceLogCallback callback )
 {
     traceLog = callback;
@@ -50,7 +50,7 @@ SetTraceLogCallback( TraceLogCallback callback )
 // Module Functions Definition: Utilities
 //----------------------------------------------------------------------------------------------------------------------
 // Set a minimum log level
-INLINE void
+void
 SetLogLevel( int logType )
 {
     logLevel = logType;
