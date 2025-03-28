@@ -56,9 +56,6 @@ add_library(${PROJECT_NAME}
 setup_opengl_target(${PROJECT_NAME})
 target_link_libraries(${PROJECT_NAME} PUBLIC ${LEVE_LINK_DEPS})
 
-# Sanitizers
-add_sanitizers(${PROJECT_NAME})
-
 #--------------------------------------------------------------------
 # Include Directories
 #--------------------------------------------------------------------
