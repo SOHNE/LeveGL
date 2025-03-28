@@ -77,5 +77,5 @@ jobs:
                 ..
 
       - name: Build project
-        run: cmake --build build --config $env:BUILD_TYPE -j4
+        run: cmake --build build --config ${BUILD_TYPE} -j4
 
