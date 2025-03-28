@@ -56,6 +56,13 @@ add_library(${PROJECT_NAME}
 setup_opengl_target(${PROJECT_NAME})
 target_link_libraries(${PROJECT_NAME} PUBLIC ${LEVE_LINK_DEPS})
 
+# Set compile flags
+target_compile_options(${PROJECT_NAME} PRIVATE
+    $<$<OR:$<C_COMPILER_ID:Clang>,$<C_COMPILER_ID:AppleClang>>:-Weverything>
+    $<$<C_COMPILER_ID:GNU>:-Wall -Wpedantic -Wextra -Werror -fdiagnostics-color=always>
+    $<$<C_COMPILER_ID:MSVC>:/W4 /WX>
+)
+
 #--------------------------------------------------------------------
 # Include Directories
 #--------------------------------------------------------------------
