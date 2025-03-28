@@ -44,12 +44,13 @@ typedef struct
 typedef struct CoreContext
 {
     /// Window configuration group containing title and dimensions
-    struct
+    struct window
     {
-        const char * title; /// Window title string (memory managed externally)
-        unsigned int flags;
+        const char * title;      /// Window title string (memory managed externally)
+        unsigned int flags;      /// Configuration bits
+        char         shouldQuit; /// Is main window closing?
 
-        Dimension screen;   /// Window Size
+        Dimension screen;        /// Window Size
 
     } window;
 

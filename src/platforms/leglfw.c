@@ -3,8 +3,8 @@
 //==============================================================================================================
 #include "lecore_context.h"
 
-#include "levegl/leutils.h"
 #include "levegl/levegl.h"
+#include "levegl/leutils.h"
 
 #include <stddef.h>
 #include <string.h>
@@ -127,7 +127,7 @@ ClosePlatform( void )
 bool
 ShouldQuit( void )
 {
-    return glfwWindowShouldClose( platform.handle );
+    return core.window.shouldQuit;
 }
 
 void
@@ -253,5 +253,7 @@ PollInputEvents( void )
     // TODO: Implement an event waiter to correctly store pressed keys when drawing is paused
     glfwPollEvents();
 
+    /* Handle quit event */
+    core.window.shouldQuit = glfwWindowShouldClose( platform.handle );
     glfwSetWindowShouldClose( platform.handle, GLFW_FALSE );
 }

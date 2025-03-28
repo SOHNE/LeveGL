@@ -3,8 +3,8 @@
 //==============================================================================================================
 #include "lecore_context.h"
 
-#include "levegl/leutils.h"
 #include "levegl/levegl.h"
+#include "levegl/leutils.h"
 
 #undef LEGL_IMPLEMENTATION
 #include "levegl/legl.h"
@@ -107,7 +107,7 @@ ClosePlatform( void )
 bool
 ShouldQuit( void )
 {
-    return glfwWindowShouldClose( platform.handle );
+    return false;
 }
 
 void
