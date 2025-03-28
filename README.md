@@ -6,6 +6,7 @@
 ### `LeveGL`
 
 [![License][license-badge]][license-link]
+[![CI Build][ci-badge]][ci-link]
 
 A simple rendering library for a simpler world. 🍃
 
@@ -149,6 +150,9 @@ LeveGL depends on several third-party libraries and dependencies, each distribut
 
 [license-badge]: https://img.shields.io/github/license/SOHNE/LeveGL
 [license-link]: https://github.com/SOHNE/LeveGL/blob/main/LICENSE
+
+[ci-badge]: https://github.com/SOHNE/LeveGL/actions/workflows/build.yml/badge.svg
+[ci-link]: https://github.com/SOHNE/LeveGL/actions/workflows/build.yml
 
 [CPM.cmake]: https://github.com/cpm-cmake/CPM.cmake/
 [CMake]: https://cmake.org/
