@@ -18,7 +18,7 @@ option(CCACHE_OPTIONS "Compiler cache options" "CCACHE_CPP2=true;CCACHE_SLOPPINE
 option(LOG_SUPPORT "Enable LeveGL logging system" ON)
 
 # leGL
-option(LEGL_SHOW_GL_INFO "Enable leGL logging detailed GL information" ON)
+option(LEGL_SHOW_GL_INFO "Enable leGL logging detailed GL information" OFF)
 
 #--------------------------------------------------------------------
 # Sanitize Options
