@@ -34,7 +34,7 @@ typedef struct Coordinate
     int y;
 } Coordinate;
 
-typedef struct
+typedef struct Dimension
 {
     unsigned int width;
     unsigned int height;
@@ -48,14 +48,14 @@ typedef struct CoreContext
     {
         const char * title;      /// Window title string (memory managed externally)
         unsigned int flags;      /// Configuration bits
-        char         shouldQuit; /// Is main window closing?
+        int          shouldQuit; /// Is main window closing?
 
         Dimension screen;        /// Window Size
 
     } window;
 
     /// Timing configuration group for frame rate control
-    struct
+    struct timing
     {
         double       lastFrameTime; /// Timestamp of last frame in seconds
         double       targetFPS;     /// Target FPS for the application

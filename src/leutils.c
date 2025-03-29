@@ -31,6 +31,12 @@
 #include <stdlib.h> /* abort */
 
 //----------------------------------------------------------------------------------------------------------------------
+// Module Declaration
+//----------------------------------------------------------------------------------------------------------------------
+void SetLogLevel( int logType );                       // Set a minimum log level
+void TraceLog( int logLevel, const char * text, ... ); // Display a log message
+
+//----------------------------------------------------------------------------------------------------------------------
 // Variables Definition
 //----------------------------------------------------------------------------------------------------------------------
 static int              logLevel = LOG_INFO; // Current log level
@@ -61,7 +67,7 @@ void
 TraceLog( int logType, const char * text, ... )
 {
     // Skip logging
-    if( (int)logLevel > logType ) return;
+    if( logLevel > logType ) return;
 
     va_list args;
     va_start( args, text );

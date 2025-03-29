@@ -33,10 +33,11 @@ static PlatformContext platform = { 0 };
 //==============================================================================================================
 // MODULE FUNCTIONS DECLARATIONS
 //==============================================================================================================
-int InitPlatform();
+int  InitPlatform( void );
+void ClosePlatform( void );
 
-extern void InitShapes( void );
-extern void CleanupShapes( void );
+int GetScreenWidth( void );
+int GetScreenHeight( void );
 
 extern void PollInputEvents( void );
 
@@ -48,7 +49,7 @@ static void KeyCallback( GLFWwindow * window, int key, int scancode, int action,
 // MODULE FUNCTIONS DEFINITIONS
 //==============================================================================================================
 int
-InitPlatform()
+InitPlatform( void )
 {
     TRACELOG( LOG_INFO, "Initializing window: %s (%dx%d)", core.window.title, core.window.screen.width,
               core.window.screen.height );
@@ -77,8 +78,8 @@ InitPlatform()
     glfwWindowHint( GLFW_SAMPLES, FLAG_CHECK( core.window.flags, FLAG_MSAA_HINT ) ? 4 : 0 );
 
     // Create the window.
-    platform.handle
-        = glfwCreateWindow( core.window.screen.width, core.window.screen.height, core.window.title, NULL, NULL );
+    platform.handle = glfwCreateWindow( (int)core.window.screen.width, (int)core.window.screen.height,
+                                        core.window.title, NULL, NULL );
     if( !platform.handle )
         {
             TRACELOG( LOG_ERROR, "Failed to create GLFW window" );
@@ -88,9 +89,7 @@ InitPlatform()
 
     glfwMakeContextCurrent( platform.handle );
 
-    leLoadExtensions( glfwGetProcAddress );
-
-    InitShapes();
+    leLoadExtensions( (void *)glfwGetProcAddress );
 
     // Set VSync based on our flag configuration.
     glfwSwapInterval( FLAG_CHECK( core.window.flags, FLAG_VSYNC_HINT ) ? 1 : 0 );
@@ -109,9 +108,6 @@ InitPlatform()
 void
 ClosePlatform( void )
 {
-    // First clean up any OpenGL resources
-    CleanupShapes();
-
     // Check if window exists before destroying
     if( NULL != platform.handle )
         {
@@ -193,15 +189,20 @@ GetWindowHandle( void )
 static void
 FramebufferSizeCallback( GLFWwindow * window, int width, int height )
 {
+    UNUSED( window );
+
     leViewport( 0, 0, width, height );
-    core.window.screen.width  = width;
-    core.window.screen.height = height;
+    core.window.screen.width  = (unsigned int)width;
+    core.window.screen.height = (unsigned int)height;
     TRACELOG( LOG_INFO, "Window resized to %dx%d", width, height );
 }
 
 static void
 KeyCallback( GLFWwindow * window, int key, int scancode, int action, int mods )
 {
+    UNUSED( window );
+    UNUSED( scancode );
+
     // Filter invalid key codes
     if( UNLIKELY( KEY_NULL > key ) ) return;
 
@@ -226,6 +227,7 @@ KeyCallback( GLFWwindow * window, int key, int scancode, int action, int mods )
                 core.input.keyboard.keyRepeats[key] = 1;
                 break;
             }
+        default: break;
         }
 
     // Force lock keys to active state when modifiers match

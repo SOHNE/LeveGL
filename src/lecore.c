@@ -12,7 +12,6 @@
  *   - Early development stage
  *
  * TODO:
- *   - Design and implement an input system to handle user interactions.
  *   - Expand backend support for additional platforms.
  *
  *                               LICENSE
@@ -39,10 +38,10 @@
 //==============================================================================================================
 // INCLUDES
 //==============================================================================================================
-#include "lecore_context.h"
-
 #include "levegl/levegl.h"
 #include "levegl/leutils.h"
+
+#include "lecore_context.h"
 
 #define LEGL_IMPLEMENTATION
 #include "levegl/legl.h"
@@ -59,11 +58,8 @@ CoreContext core = { 0 };
 //==============================================================================================================
 // MODULE FUNCTIONS DECLARATIONS
 //==============================================================================================================
-extern int  InitPlatform();
+extern int  InitPlatform( void );
 extern void ClosePlatform( void );
-
-extern void InitShapes( void );
-extern void CleanupShapes( void );
 
 //==============================================================================================================
 // MODULE FUNCTIONS DEFINITONS
@@ -73,8 +69,8 @@ InitWindow( int width, int height, const char * title )
 {
     TRACELOG( LOG_INFO, "Initializing LeveGL - %s", LEVEGL_VERSION );
 
-    core.window.screen.height = height;
-    core.window.screen.width  = width;
+    core.window.screen.height = (unsigned int)height;
+    core.window.screen.width  = (unsigned int)width;
     if( STR_NONEMPTY( title ) )
         {
             core.window.title = title;
@@ -84,7 +80,7 @@ InitWindow( int width, int height, const char * title )
 }
 
 void
-CloseWindow()
+CloseWindow( void )
 {
     ClosePlatform();
     memset( &core, 0, sizeof( core ) );
@@ -157,5 +153,8 @@ GetFrameTime( void )
 int
 GetFPS( void )
 {
-    return (int)roundf( 1.0f / GetFrameTime() );
+    float frameTime = GetFrameTime();
+    if( frameTime < 0.000001f ) return 0;
+
+    return (int)( roundf( 1.0F / frameTime ) );
 }

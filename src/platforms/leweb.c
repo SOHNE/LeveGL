@@ -30,7 +30,7 @@ static PlatformContext platform = { 0 };
 //==============================================================================================================
 // MODULE FUNCTIONS DECLARATIONS
 //==============================================================================================================
-int         InitPlatform();
+int         InitPlatform( void );
 extern void InitShapes( void );
 extern void CleanupShapes( void );
 static void FramebufferSizeCallback( GLFWwindow * window, int width, int height );
@@ -49,7 +49,7 @@ GetTime( void )
 // MODULE FUNCTIONS DEFINITIONS
 //==============================================================================================================
 int
-InitPlatform()
+InitPlatform( void )
 {
     TRACELOG( LOG_INFO, "Initializing window: %s (%dx%d)", core.window.title, core.window.screen.width,
               core.window.screen.height );
@@ -66,8 +66,8 @@ InitPlatform()
     glfwWindowHint( GLFW_CONTEXT_VERSION_MINOR, 0 );
     glfwWindowHint( GLFW_RESIZABLE, GLFW_TRUE );
 
-    platform.handle
-        = glfwCreateWindow( core.window.screen.width, core.window.screen.height, core.window.title, NULL, NULL );
+    platform.handle = glfwCreateWindow( (int)core.window.screen.width, (int)core.window.screen.height,
+                                        core.window.title, NULL, NULL );
     if( !platform.handle )
         {
             TRACELOG( LOG_ERROR, "Failed to create GLFW window" );
@@ -76,8 +76,7 @@ InitPlatform()
         }
 
     glfwMakeContextCurrent( platform.handle );
-    leLoadExtensions( glfwGetProcAddress );
-    InitShapes();
+    leLoadExtensions( (void *)glfwGetProcAddress );
 
     // Configure timing
     core.timing.targetFPS     = 60;
@@ -93,8 +92,6 @@ InitPlatform()
 void
 ClosePlatform( void )
 {
-    CleanupShapes();
-
     if( platform.handle )
         {
             glfwDestroyWindow( platform.handle );
@@ -128,15 +125,20 @@ SwapBuffers( void )
 static void
 FramebufferSizeCallback( GLFWwindow * window, int width, int height )
 {
-    //glViewport( 0, 0, width, height );
-    core.window.screen.width  = width;
-    core.window.screen.height = height;
+    UNUSED( window );
+
+    leViewport( 0, 0, width, height );
+    core.window.screen.width  = (unsigned int)width;
+    core.window.screen.height = (unsigned int)height;
     TRACELOG( LOG_INFO, "Window resized to %dx%d", width, height );
 }
 
 static void
 KeyCallback( GLFWwindow * window, int key, int scancode, int action, int mods )
 {
+    UNUSED( window );
+    UNUSED( scancode );
+
     // Filter invalid key codes
     if( UNLIKELY( KEY_NULL > key ) ) return;
 
@@ -161,6 +163,7 @@ KeyCallback( GLFWwindow * window, int key, int scancode, int action, int mods )
                 core.input.keyboard.keyRepeats[key] = 1;
                 break;
             }
+        default: break;
         }
 
     // Force lock keys to active state when modifiers match
@@ -188,5 +191,6 @@ PollInputEvents( void )
     // TODO: Implement an event waiter to correctly store pressed keys when drawing is paused
     glfwPollEvents();
 
+    core.window.shouldQuit = glfwWindowShouldClose( platform.handle );
     glfwSetWindowShouldClose( platform.handle, GLFW_FALSE );
 }
