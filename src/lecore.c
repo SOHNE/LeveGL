@@ -76,7 +76,12 @@ InitWindow( int width, int height, const char * title )
             core.window.title = title;
         }
 
+    TRACELOG( LOG_INFO, "Initializing window: %s (%dx%d)", core.window.title, core.window.screen.width,
+              core.window.screen.height );
+
     InitPlatform();
+
+    TRACELOG( LOG_INFO, "Window initialized successfully" );
 }
 
 void
