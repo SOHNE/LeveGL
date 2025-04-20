@@ -17,22 +17,29 @@
 int
 main( void )
 {
+    /*------------------------- Setup -------------------------*/
     const int screenWidth  = 480;
     const int screenHeight = 272;
 
     InitWindow( screenWidth, screenHeight, "LeveGL: Basic Window" );
     SetTargetFPS( 60 );
 
+    /*------------------------- Loop --------------------------*/
     while( !ShouldQuit() )
         {
+            /*---------------- Internal Update ----------------*/
+            if( IsKeyDown( KEY_ESCAPE ) )
+                {
+                    break;
+                }
+
+            /*-------------------- Render ---------------------*/
             BeginDrawing();
-
                 ClearBackground( WHITE );
-
             EndDrawing();
         }
 
+    /*----------------------- Shutdown ------------------------*/
     CloseWindow();
-
     return 0;
 }
