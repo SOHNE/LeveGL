@@ -33,7 +33,6 @@
  *************************************************************************/
 
 #include "levegl/levegl.h"
-#include "levegl/leutils.h"
 
 #include "lecore_context.h"
 
@@ -49,9 +48,7 @@ extern CoreContext core;
 INLINE bool
 IsAnyKeyPressed( void )
 {
-    NO_IMPL();
-
-    return false;
+    return 0 < core.input.keyboard.pressedKeyCount;
 }
 
 // Check if the given key is been pressed
