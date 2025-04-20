@@ -94,7 +94,7 @@ TraceLog( int logType, const char * text, ... )
         }
 
     // Print log message
-    fprintf( stdout, "[%s] ", levelString );
+    fprintf( stdout, "%s: ", levelString );
     vfprintf( stdout, text, args );
     fprintf( stdout, "\n" );
 
