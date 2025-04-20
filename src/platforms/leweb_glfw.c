@@ -51,9 +51,6 @@ GetTime( void )
 int
 InitPlatform( void )
 {
-    TRACELOG( LOG_INFO, "Initializing window: %s (%dx%d)", core.window.title, core.window.screen.width,
-              core.window.screen.height );
-
     if( !glfwInit() )
         {
             TRACELOG( LOG_ERROR, "Failed to initialize GLFW" );
@@ -85,7 +82,8 @@ InitPlatform( void )
     glfwSetFramebufferSizeCallback( platform.handle, FramebufferSizeCallback );
     glfwSetKeyCallback( platform.handle, KeyCallback );
 
-    TRACELOG( LOG_INFO, "Window initialized successfully" );
+    TRACELOG( LOG_INFO, "GLFW Initialized: %s", glfwGetVersionString() );
+
     return 0;
 }
 
