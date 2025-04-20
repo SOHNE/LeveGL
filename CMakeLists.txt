@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.26 FATAL_ERROR)
 project(
   LeveGL
-  VERSION 25.0.1
+  VERSION 25.0.2
   DESCRIPTION "A simple rendering engine"
   LANGUAGES C
   HOMEPAGE_URL "https://github.com/SOHNE/LeveGL"
@@ -60,8 +60,6 @@ include(cmake/tools.cmake)
 
 set(LEVE_INCLUDE_DEPS_DIR "")
 set(LEVE_LINK_DEPS "")
-
-include(cmake/deps/glfw.cmake)
 
 list(APPEND LEVE_INCLUDE_DEPS_DIR "${PROJECT_SOURCE_DIR}/external")
 

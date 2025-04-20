@@ -5,6 +5,7 @@ include(EnumOption)
 # Define Enum Options
 #--------------------------------------------------------------------
 enum_option(PLATFORM "Desktop;Web" "Select the target platform for the build.")
+enum_option(WINDOW_SYSTEM "GLFW;SDL2" "Select the windowing system to use.")
 enum_option(OPENGL_VERSION "Auto;4.3;3.3;2.1;1.1;ES 2.0;ES 3.0" "Specify an OpenGL version, or use Auto to let it be determined automatically.")
 
 #--------------------------------------------------------------------

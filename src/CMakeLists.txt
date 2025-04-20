@@ -25,16 +25,7 @@ list(APPEND LEVE_SOURCE_FILES
 )
 
 # Add platform-specific
-if(PLATFORM STREQUAL "Desktop")
-    set(platform_file "leglfw.c")
-elseif(PLATFORM STREQUAL "Web")
-    set(platform_file "leweb.c")
-else()
-    message(FATAL_ERROR "Unsupported platform: ${PLATFORM}")
-endif()
-
-list(APPEND LEVE_SOURCE_FILES "${LEVE_SOURCE_DIR}/platforms/${platform_file}")
-
+include(PlatformConfiguration)
 
 #--------------------------------------------------------------------
 # Library Setup
