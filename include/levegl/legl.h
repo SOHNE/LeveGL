@@ -93,6 +93,20 @@ LEAPI void leStencilMask( unsigned int mask );                    // Control whi
 #        define TRACELOGD( ... )       ( (void)( 0 ) )
 #    endif // !TRACELOG
 
+/* Custom memory allocators */
+#    ifndef LE_MALLOC
+#        define LE_MALLOC( bytes ) malloc( bytes )
+#    endif
+#    ifndef LE_CALLOC
+#        define LE_CALLOC( count, bytes ) calloc( ( count ), ( bytes ) )
+#    endif
+#    ifndef LE_REALLOC
+#        define LE_REALLOC( ptr, bytes ) realloc( ( ptr ), ( bytes ) )
+#    endif
+#    ifndef LE_FREE
+#        define LE_FREE( ptr ) free( ptr )
+#    endif
+
 //----------------------------------------------------------------------------------------------------------------------
 // Module Functions Definitions
 //----------------------------------------------------------------------------------------------------------------------
