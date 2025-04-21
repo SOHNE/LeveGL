@@ -60,6 +60,7 @@
 //----------------------------------------------------------------------------------------------------------------------
 // Initialize OpenGL extensions using platform-specific loader
 LEAPI void leLoadExtensions( void * loaderPtr );                  // Load the required required OpenGL extensions
+LEAPI void leEnable( unsigned int capability, int enable );       // Enable or disable a GL capability
 
 LEAPI void leClearColor( float r, float g, float b, float a );    // Clear the color buffer with the given color
 LEAPI void leClear( unsigned int mask );                          // Clear the given mask
@@ -70,6 +71,10 @@ LEAPI void leViewport( int x, int y, int width, int height );     // Set the vie
 LEAPI void leStencilFunc( int func, int ref, unsigned int mask ); // Set stencil test function, reference value and mask
 LEAPI void leStencilOp( int sfail, int dpfail, int dppass );      // Set stencil operations for different test outcomes
 LEAPI void leStencilMask( unsigned int mask );                    // Control which bits in stencil buffer are writable
+
+// Framebuffer
+LEAPI unsigned int leCreateFramebuffer( void );            // Create a rendering Framebuffer
+LEAPI void         leDeleteFramebuffer( unsigned int fb ); // Delete a given framebuffer object
 
 //**********************************************************************************************************************
 //
@@ -245,6 +250,16 @@ leLoadExtensions( void * loaderPtr )
 #    endif
 }
 
+// Enable or disable a GL capability
+void
+leEnable( uint32_t capability, int enable )
+{
+    if( enable )
+        glEnable( capability );
+    else
+        glDisable( capability );
+}
+
 // Clear the color buffer with the provided color values
 void
 leClearColor( float r, float g, float b, float a )
@@ -271,6 +286,36 @@ void
 leViewport( int x, int y, int width, int height )
 {
     glViewport( x, y, width, height );
+}
+
+/* ------------------ Framebuffer Functions ------------------ */
+// Create an empty framebuffer object
+unsigned int
+leCreateFramebuffer( void )
+{
+    unsigned int fboId = 0;
+
+#    if defined( GRAPHICS_API_OPENGL_33 ) || defined( GRAPHICS_API_OPENGL_ES2 )
+    glGenFramebuffers( 1, &fboId );         // Create a single framebuffer object
+    glBindFramebuffer( GL_FRAMEBUFFER, 0 ); // Unbind any framebuffer
+#    endif
+
+    return fboId;
+}
+
+// Delete a framebuffer object
+void
+leDeleteFramebuffer( unsigned int fb )
+{
+#    if defined( GRAPHICS_API_OPENGL_33 ) || defined( GRAPHICS_API_OPENGL_ES2 )
+
+    // TODO: automatically delete depth or any attachment
+
+    glDeleteFramebuffers( 1, &fb );
+
+    TRACELOG( LOG_INFO, "Framebuffer [ID %i] released from VRAM", fb );
+
+#    endif
 }
 
 /* -------------------- Stencil Functions -------------------- */
@@ -307,4 +352,3 @@ leStencilMask( unsigned int mask )
 
 #endif // LEGL_IMPLEMENTATION
 #endif // !LEGL_H
-
