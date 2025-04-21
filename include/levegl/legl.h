@@ -108,6 +108,13 @@ LEAPI void leStencilMask( unsigned int mask );                    // Control whi
 #    endif
 
 //----------------------------------------------------------------------------------------------------------------------
+// Types & Structures Definitions
+//----------------------------------------------------------------------------------------------------------------------
+#    if defined( GRAPHICS_API_OPENGL_33 ) || defined( GRAPHICS_API_OPENGL_ES2 )
+typedef void * ( *leglLoadProc )( const char * name );
+#    endif // defined( GRAPHICS_API_OPENGL_33 ) || defined ( GRAPHICS_API_OPENGL_ES2 )
+
+//----------------------------------------------------------------------------------------------------------------------
 // Module Functions Definitions
 //----------------------------------------------------------------------------------------------------------------------
 /* ------------------ Core OpenGL Functions ------------------ */
@@ -172,7 +179,7 @@ leLoadExtensions( void * loaderPtr )
     TRACELOG( LOG_INFO, "  - Version : %s", glGetString( GL_VERSION ) );
     TRACELOG( LOG_INFO, "  - GLSL    : %s", glGetString( GL_SHADING_LANGUAGE_VERSION ) );
 
-    // Always display extension count, regardless of LEGL_SHOW_GL_INFO
+    // Display extension count
 #    if defined( GRAPHICS_API_OPENGL_33 )
     GLint numExtensions = 0;
     glGetIntegerv( GL_NUM_EXTENSIONS, &numExtensions );
