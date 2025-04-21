@@ -10,6 +10,11 @@
  * - OpenGL context verification
  * - Cross-platform extension management
  *
+ *                            CONFIGURATIONS
+ * ------------------------------------------------------------------------
+ *  LEGL_SHOW_GL_INFO:
+ *      - Display OpenGL info, extensions and capabilities.
+ *
  *                               LICENSE
  * ------------------------------------------------------------------------
  * Copyright (c) 2025 SOHNE, Leandro Peres (@zschzen)
@@ -41,7 +46,9 @@
 //----------------------------------------------------------------------------------------------------------------------
 // Module Defines and Macros
 //----------------------------------------------------------------------------------------------------------------------
-// ...
+#ifndef LEAPI
+#    define LEAPI
+#endif
 
 //----------------------------------------------------------------------------------------------------------------------
 // Global Variables Definition
@@ -89,6 +96,7 @@ LEAPI void leStencilMask( unsigned int mask );                    // Control whi
 //----------------------------------------------------------------------------------------------------------------------
 // Module Functions Definitions
 //----------------------------------------------------------------------------------------------------------------------
+/* ------------------ Core OpenGL Functions ------------------ */
 // Load OpenGL extensions using GLAD with platform-specific function loader
 void
 leLoadExtensions( void * loaderPtr )
@@ -112,29 +120,87 @@ leLoadExtensions( void * loaderPtr )
         {
             TRACELOG( LOG_INFO, "GLAD: OpenGL ES 2.0 loaded successfully" );
         }
+    // Store extensions for ES2.0
+    const char * extensionsStr  = (const char *)glGetString( GL_EXTENSIONS );
+    char *       extensionsCopy = NULL;
+    char **      extensionList  = NULL;
+    int          extensionCount = 0;
+    if( NULL != extensionsStr )
+        {
+            // Create a copy of the extensions string to tokenize
+            extensionsCopy = strdup( extensionsStr );
+            // First pass: count extensions
+            char * token   = strtok( extensionsCopy, " " );
+            while( NULL != token )
+                {
+                    extensionCount++;
+                    token = strtok( NULL, " " );
+                }
+            // Allocate array for extensions
+            extensionList = (char **)malloc( extensionCount * sizeof( char * ) );
+            // Reset copy and do second pass to store extensions
+            free( extensionsCopy );
+            extensionsCopy = strdup( extensionsStr );
+            extensionCount = 0;
+            token          = strtok( extensionsCopy, " " );
+            while( token != NULL )
+                {
+                    extensionList[extensionCount] = strdup( token );
+                    extensionCount++;
+                    token = strtok( NULL, " " );
+                }
+        }
 #    endif // GRAPHICS_API_OPENGL_ES2
+    // Display OpenGL and GLSL information
+    TRACELOG( LOG_INFO, "OpenGL Device Information:" );
+    TRACELOG( LOG_INFO, "  - Vendor  : %s", glGetString( GL_VENDOR ) );
+    TRACELOG( LOG_INFO, "  - Renderer: %s", glGetString( GL_RENDERER ) );
+    TRACELOG( LOG_INFO, "  - Version : %s", glGetString( GL_VERSION ) );
+    TRACELOG( LOG_INFO, "  - GLSL    : %s", glGetString( GL_SHADING_LANGUAGE_VERSION ) );
 
-    /* Display OpenGL and GLSL information */
-    {
-        TRACELOG( LOG_INFO, "OpenGL Device Information:" );
-        TRACELOG( LOG_INFO, "  - Vendor  : %s", glGetString( GL_VENDOR ) );
-        TRACELOG( LOG_INFO, "  - Renderer: %s", glGetString( GL_RENDERER ) );
-        TRACELOG( LOG_INFO, "  - Version : %s", glGetString( GL_VERSION ) );
-        TRACELOG( LOG_INFO, "  - GLSL    : %s", glGetString( GL_SHADING_LANGUAGE_VERSION ) );
+    // Always display extension count, regardless of LEGL_SHOW_GL_INFO
+#    if defined( GRAPHICS_API_OPENGL_33 )
+    GLint numExtensions = 0;
+    glGetIntegerv( GL_NUM_EXTENSIONS, &numExtensions );
+    TRACELOG( LOG_INFO, "Extensions Count: %d", numExtensions );
+#    elif defined( GRAPHICS_API_OPENGL_ES2 )
+    TRACELOG( LOG_INFO, "Extensions Count: %d", extensionCount );
+#    endif
 
-        /* Log extensions */
-        GLint numExtensions = 0;
-        glGetIntegerv( GL_NUM_EXTENSIONS, &numExtensions );
-#    if defined( SHOW_EXTENSIONS )
-        TRACELOG( LOG_INFO, "Supported OpenGL Extensions (%d):", numExtensions );
-
-        for( GLint i = 0; i < numExtensions; ++i )
-            {
-                const char * extensionName = (const char *)glGetStringi( GL_EXTENSIONS, i );
-                TRACELOG( LOG_INFO, "  - %s", extensionName );
-            }
-#    endif // SHOW_EXTENSIONS
-    }
+#    if defined( LEGL_SHOW_GL_INFO )
+    TRACELOG( LOG_INFO, "Supported OpenGL Extensions:" );
+#        if defined( GRAPHICS_API_OPENGL_33 )
+    for( GLint i = 0; i < numExtensions; ++i )
+        {
+            const char * extensionName = (const char *)glGetStringi( GL_EXTENSIONS, i );
+            TRACELOG( LOG_INFO, "  - %s", extensionName );
+        }
+#        elif defined( GRAPHICS_API_OPENGL_ES2 )
+    if( NULL != extensionsStr )
+        {
+            for( int i = 0; i < extensionCount; ++i )
+                {
+                    TRACELOG( LOG_INFO, "  - %s", extensionList[i] );
+                }
+        }
+    else
+        {
+            TRACELOG( LOG_WARNING, "No extensions found" );
+        }
+#        endif // GRAPHICS_API_OPENGL_ES2
+#    endif     // LEGL_SHOW_GL_INFO
+               // Cleanup for ES2.0
+#    if defined( GRAPHICS_API_OPENGL_ES2 )
+    if( NULL != extensionList )
+        {
+            for( int i = 0; i < extensionCount; ++i )
+                {
+                    LE_FREE( extensionList[i] );
+                }
+            LE_FREE( extensionList );
+            LE_FREE( extensionsCopy );
+        }
+#    endif
 }
 
 // Clear the color buffer with the provided color values
@@ -199,3 +265,4 @@ leStencilMask( unsigned int mask )
 
 #endif // LEGL_IMPLEMENTATION
 #endif // !LEGL_H
+
