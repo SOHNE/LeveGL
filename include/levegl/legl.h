@@ -148,10 +148,16 @@ leLoadExtensions( void * loaderPtr )
     int          extensionCount = 0;
     if( NULL != extensionsStr )
         {
-            // Create a copy of the extensions string to tokenize
-            extensionsCopy = strdup( extensionsStr );
+            // Create a custom strdup to replace the standard one
+            size_t len     = strlen( extensionsStr ) + 1; // +1 for null terminator
+            extensionsCopy = (char *)malloc( len );
+            if( extensionsCopy != NULL )
+                {
+                    memcpy( extensionsCopy, extensionsStr, len );
+                }
+
             // First pass: count extensions
-            char * token   = strtok( extensionsCopy, " " );
+            char * token = strtok( extensionsCopy, " " );
             while( NULL != token )
                 {
                     extensionCount++;
@@ -161,12 +167,27 @@ leLoadExtensions( void * loaderPtr )
             extensionList = (char **)malloc( extensionCount * sizeof( char * ) );
             // Reset copy and do second pass to store extensions
             free( extensionsCopy );
-            extensionsCopy = strdup( extensionsStr );
+
+            // Do another custom strdup
+            len            = strlen( extensionsStr ) + 1;
+            extensionsCopy = (char *)malloc( len );
+            if( extensionsCopy != NULL )
+                {
+                    memcpy( extensionsCopy, extensionsStr, len );
+                }
+
             extensionCount = 0;
             token          = strtok( extensionsCopy, " " );
             while( token != NULL )
                 {
-                    extensionList[extensionCount] = strdup( token );
+                    // Custom strdup for each extension
+                    size_t tokenLen               = strlen( token ) + 1;
+                    extensionList[extensionCount] = (char *)malloc( tokenLen );
+                    if( extensionList[extensionCount] != NULL )
+                        {
+                            memcpy( extensionList[extensionCount], token, tokenLen );
+                        }
+
                     extensionCount++;
                     token = strtok( NULL, " " );
                 }
