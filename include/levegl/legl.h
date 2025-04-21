@@ -52,13 +52,17 @@
 // Module Functions Declarations
 //----------------------------------------------------------------------------------------------------------------------
 // Initialize OpenGL extensions using platform-specific loader
-LEAPI void leLoadExtensions( void * loaderPtr );               // Load the required required OpenGL extensions
+LEAPI void leLoadExtensions( void * loaderPtr );                  // Load the required required OpenGL extensions
 
-LEAPI void leClearColor( float r, float g, float b, float a ); // Clear the color buffer with the given color
-LEAPI void leClear( unsigned int mask );                       // Clear the given mask
-LEAPI void leClearScreenBuffers( void );                       // Clear both color and depth buffers
+LEAPI void leClearColor( float r, float g, float b, float a );    // Clear the color buffer with the given color
+LEAPI void leClear( unsigned int mask );                          // Clear the given mask
+LEAPI void leClearScreenBuffers( void );                          // Clear both color and depth buffers
 
-LEAPI void leViewport( int x, int y, int width, int height );  // Set the viewport
+LEAPI void leViewport( int x, int y, int width, int height );     // Set the viewport
+
+LEAPI void leStencilFunc( int func, int ref, unsigned int mask ); // Set stencil test function, reference value and mask
+LEAPI void leStencilOp( int sfail, int dpfail, int dppass );      // Set stencil operations for different test outcomes
+LEAPI void leStencilMask( unsigned int mask );                    // Control which bits in stencil buffer are writable
 
 //**********************************************************************************************************************
 //
@@ -159,6 +163,38 @@ void
 leViewport( int x, int y, int width, int height )
 {
     glViewport( x, y, width, height );
+}
+
+/* -------------------- Stencil Functions -------------------- */
+// Set the stencil test function and reference value
+void
+leStencilFunc( int func, int ref, unsigned int mask )
+{
+    // Controls how stencil test is performed and which fragments pass
+    // func: stencil test function (e.g., GL_EQUAL, GL_LESS)
+    // ref: reference value to compare against
+    // mask: bit mask applied to reference and stored stencil values before comparison
+    glStencilFunc( func, ref, mask );
+}
+
+// Set the stencil buffer operations
+void
+leStencilOp( int sfail, int dpfail, int dppass )
+{
+    // Specifies what happens to the stencil buffer value under different test outcomes
+    // sfail: action when stencil test fails
+    // dpfail: action when stencil test passes but depth test fails
+    // dppass: action when both stencil and depth tests pass
+    glStencilOp( sfail, dpfail, dppass );
+}
+
+// Control which bits in the stencil buffer are writable
+void
+leStencilMask( unsigned int mask )
+{
+    // Sets a bit mask that controls which bits in the stencil buffer can be modified
+    // mask: bit mask where 1 means writable, 0 means protected
+    glStencilMask( mask );
 }
 
 #endif // LEGL_IMPLEMENTATION
