@@ -88,7 +88,6 @@ void
 CloseWindow( void )
 {
     ClosePlatform();
-    memset( &core, 0, sizeof( core ) );
 
     TRACELOG( LOG_INFO, "Window closed" );
 }
