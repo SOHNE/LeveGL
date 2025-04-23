@@ -2,6 +2,13 @@ include(CMakeDependentOption)
 include(EnumOption)
 
 #--------------------------------------------------------------------
+# Platform Detection
+#--------------------------------------------------------------------
+if(EMSCRIPTEN)
+    set(PLATFORM Web CACHE STRING "Select the target platform for the build." FORCE)
+endif()
+
+#--------------------------------------------------------------------
 # Define Enum Options
 #--------------------------------------------------------------------
 enum_option(PLATFORM "Desktop;Web" "Select the target platform for the build.")
