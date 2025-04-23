@@ -37,27 +37,19 @@ if(PLATFORM STREQUAL "Desktop")
             ${OPENGL_LIBRARIES}
         )
 
-    elseif(UNIX AND NOT APPLE)
-        find_library(OPENGL_LIBRARY OpenGL)
-        find_package(X11 REQUIRED)
-        find_package(Threads REQUIRED)
+    elseif(UNIX)
+        find_library(pthread NAMES pthread)
+        find_package(OpenGL QUIET)
+        if ("${OPENGL_LIBRARIES}" STREQUAL "")
+            set(OPENGL_LIBRARIES "GL")
+        endif ()
 
-        set(SYSTEM_LIBS
-            m dl Threads::Threads
-            X11::X11
-            ${OPENGL_LIBRARIES}
-            ${X11_Xrandr_LIB}
-            ${X11_Xcursor_LIB}
-            ${X11_Xinerama_LIB}
-            ${X11_Xi_LIB}
-        )
-
-        list(APPEND LEVE_LINK_DEPS ${SYSTEM_LIBS})
+        list(APPEND LEVE_LINK_DEPS m atomic pthread ${OPENGL_LIBRARIES})
     endif()
 
 elseif(PLATFORM STREQUAL "Web")
     set(PLATFORM_BACKEND "PLATFORM_WEB")
-    set(USE_OPENGL_ES TRUE)
+    set(CMAKE_STATIC_LIBRARY_SUFFIX ".a")
 
     if(OPENGL_VERSION STREQUAL "Auto")
         set(OPENGL_VERSION "ES 2.0")
