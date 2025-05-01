@@ -153,7 +153,6 @@ leLoadExtensions( void * loaderPtr )
     int          extensionCount = 0;
     if( NULL != extensionsStr )
         {
-            // Create a custom strdup to replace the standard one
             size_t len     = strlen( extensionsStr ) + 1; // +1 for null terminator
             extensionsCopy = (char *)malloc( len );
             if( extensionsCopy != NULL )
@@ -169,26 +168,25 @@ leLoadExtensions( void * loaderPtr )
                     token = strtok( NULL, " " );
                 }
             // Allocate array for extensions
-            extensionList = (char **)malloc( extensionCount * sizeof( char * ) );
+            extensionList = (char **)LE_MALLOC( extensionCount * sizeof( char * ) );
             // Reset copy and do second pass to store extensions
             free( extensionsCopy );
 
             // Do another custom strdup
             len            = strlen( extensionsStr ) + 1;
-            extensionsCopy = (char *)malloc( len );
-            if( extensionsCopy != NULL )
+            extensionsCopy = (char *)LE_MALLOC( len );
+            if( NULL != extensionsCopy )
                 {
                     memcpy( extensionsCopy, extensionsStr, len );
                 }
 
             extensionCount = 0;
             token          = strtok( extensionsCopy, " " );
-            while( token != NULL )
+            while( NULL != token )
                 {
-                    // Custom strdup for each extension
                     size_t tokenLen               = strlen( token ) + 1;
-                    extensionList[extensionCount] = (char *)malloc( tokenLen );
-                    if( extensionList[extensionCount] != NULL )
+                    extensionList[extensionCount] = (char *)LE_MALLOC( tokenLen );
+                    if( NULL != extensionList[extensionCount] )
                         {
                             memcpy( extensionList[extensionCount], token, tokenLen );
                         }
