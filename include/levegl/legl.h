@@ -59,18 +59,14 @@
 // Module Functions Declarations
 //----------------------------------------------------------------------------------------------------------------------
 // Initialize OpenGL extensions using platform-specific loader
-LEAPI void leLoadExtensions( void * loaderPtr );                  // Load the required required OpenGL extensions
-LEAPI void leEnable( unsigned int capability, int enable );       // Enable or disable a GL capability
+LEAPI void leLoadExtensions( void * loaderPtr );               // Load the required required OpenGL extensions
+LEAPI void leEnable( unsigned int capability, int enable );    // Enable or disable a GL capability
 
-LEAPI void leClearColor( float r, float g, float b, float a );    // Clear the color buffer with the given color
-LEAPI void leClear( unsigned int mask );                          // Clear the given mask
-LEAPI void leClearScreenBuffers( void );                          // Clear both color and depth buffers
+LEAPI void leClearColor( float r, float g, float b, float a ); // Clear the color buffer with the given color
+LEAPI void leClear( unsigned int mask );                       // Clear the given mask
+LEAPI void leClearScreenBuffers( void );                       // Clear both color and depth buffers
 
-LEAPI void leViewport( int x, int y, int width, int height );     // Set the viewport
-
-LEAPI void leStencilFunc( int func, int ref, unsigned int mask ); // Set stencil test function, reference value and mask
-LEAPI void leStencilOp( int sfail, int dpfail, int dppass );      // Set stencil operations for different test outcomes
-LEAPI void leStencilMask( unsigned int mask );                    // Control which bits in stencil buffer are writable
+LEAPI void leViewport( int x, int y, int width, int height );  // Set the viewport
 
 // Framebuffer
 LEAPI unsigned int leCreateFramebuffer( void );                                // Create a rendering Framebuffer
@@ -81,8 +77,12 @@ LEAPI int  leCheckFramebufferStatus( unsigned int target );                    /
 
 // Drawing
 LEAPI void leDrawArrays( unsigned int mode, int first, int count ); //Draw arrays (GL_TRIANGLES, GL_LINES, ...)
-
 LEAPI void leDrawVertexArray( int offset, int count );              // Draw vertex array
+
+// Stencil
+LEAPI void leStencilFunc( int func, int ref, unsigned int mask ); // Set stencil test function, reference value and mask
+LEAPI void leStencilOp( int sfail, int dpfail, int dppass );      // Set stencil operations for different test outcomes
+LEAPI void leStencilMask( unsigned int mask );                    // Control which bits in stencil buffer are writable
 
 //**********************************************************************************************************************
 //
