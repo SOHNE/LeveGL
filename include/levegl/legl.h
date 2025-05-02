@@ -77,6 +77,7 @@ LEAPI unsigned int leCreateFramebuffer( void );                                /
 LEAPI void         leDeleteFramebuffer( unsigned int fb );                     // Delete a given framebuffer object
 LEAPI void leBindFramebuffer( unsigned int target, unsigned int framebuffer ); // Bind the given framebuffer (FBO)
 LEAPI void leUnbindFramebuffer( unsigned int target );                         // Unbind the given framebuffer(FBO)
+LEAPI int  leCheckFramebufferStatus( unsigned int target );                    // Check if a framebuffer is complete
 
 //**********************************************************************************************************************
 //
@@ -334,6 +335,18 @@ leUnbindFramebuffer( unsigned int target )
 #    if defined( GRAPHICS_API_OPENGL_33 ) || defined( GRAPHICS_API_OPENGL_ES2 )
     glBindFramebuffer( target, 0 );
 #    endif
+}
+
+int
+leCheckFramebufferStatus( unsigned int target )
+{
+    int status = 0;
+
+#    if defined( GRAPHICS_API_OPENGL_33 ) || defined( GRAPHICS_API_OPENGL_ES2 )
+    status = ( GL_FRAMEBUFFER_COMPLETE == glCheckFramebufferStatus( target ) ) ? 1 : 0;
+#    endif
+
+    return status;
 }
 
 /* -------------------- Stencil Functions -------------------- */
