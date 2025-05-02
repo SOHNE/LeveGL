@@ -79,6 +79,11 @@ LEAPI void leBindFramebuffer( unsigned int target, unsigned int framebuffer ); /
 LEAPI void leUnbindFramebuffer( unsigned int target );                         // Unbind the given framebuffer(FBO)
 LEAPI int  leCheckFramebufferStatus( unsigned int target );                    // Check if a framebuffer is complete
 
+// Drawing
+LEAPI void leDrawArrays( unsigned int mode, int first, int count ); //Draw arrays (GL_TRIANGLES, GL_LINES, ...)
+
+LEAPI void leDrawVertexArray( int offset, int count );              // Draw vertex array
+
 //**********************************************************************************************************************
 //
 // Module Implementation
@@ -347,6 +352,21 @@ leCheckFramebufferStatus( unsigned int target )
 #    endif
 
     return status;
+}
+
+/* -------------------- Drawing Functions -------------------- */
+//Draw arrays (GL_TRIANGLES, GL_LINES, ...)
+LEAPI void
+leDrawArrays( unsigned int mode, int first, int count )
+{
+    glDrawArrays( mode, first, count );
+}
+
+// Draw vertex array
+LEAPI void
+leDrawVertexArray( int offset, int count )
+{
+    leDrawArrays( GL_TRIANGLES, offset, count );
 }
 
 /* -------------------- Stencil Functions -------------------- */
