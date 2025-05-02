@@ -73,8 +73,10 @@ LEAPI void leStencilOp( int sfail, int dpfail, int dppass );      // Set stencil
 LEAPI void leStencilMask( unsigned int mask );                    // Control which bits in stencil buffer are writable
 
 // Framebuffer
-LEAPI unsigned int leCreateFramebuffer( void );            // Create a rendering Framebuffer
-LEAPI void         leDeleteFramebuffer( unsigned int fb ); // Delete a given framebuffer object
+LEAPI unsigned int leCreateFramebuffer( void );                                // Create a rendering Framebuffer
+LEAPI void         leDeleteFramebuffer( unsigned int fb );                     // Delete a given framebuffer object
+LEAPI void leBindFramebuffer( unsigned int target, unsigned int framebuffer ); // Bind the given framebuffer (FBO)
+LEAPI void leUnbindFramebuffer( unsigned int target );                         // Unbind the given framebuffer(FBO)
 
 //**********************************************************************************************************************
 //
@@ -313,6 +315,24 @@ leDeleteFramebuffer( unsigned int fb )
 
     TRACELOG( LOG_INFO, "Framebuffer [ID %i] released from VRAM", fb );
 
+#    endif
+}
+
+// Bind framebuffer (FBO)
+void
+leBindFramebuffer( unsigned int target, unsigned int framebuffer )
+{
+#    if defined( GRAPHICS_API_OPENGL_33 ) || defined( GRAPHICS_API_OPENGL_ES2 )
+    glBindFramebuffer( target, framebuffer );
+#    endif
+}
+
+// Unbind framebuffer
+void
+leUnbindFramebuffer( unsigned int target )
+{
+#    if defined( GRAPHICS_API_OPENGL_33 ) || defined( GRAPHICS_API_OPENGL_ES2 )
+    glBindFramebuffer( target, 0 );
 #    endif
 }
 
