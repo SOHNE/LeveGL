@@ -50,6 +50,18 @@
 #    define LEAPI
 #endif
 
+
+// C++ compatibility, preventing name mangling
+#if defined( __cplusplus )
+/* clang-format off */
+#    define CXX_GUARD_START extern "C" {
+#    define CXX_GUARD_END   }
+/* clang-format on */
+#else
+#    define CXX_GUARD_START
+#    define CXX_GUARD_END
+#endif
+
 //----------------------------------------------------------------------------------------------------------------------
 // Global Variables Definition
 //----------------------------------------------------------------------------------------------------------------------
@@ -58,6 +70,9 @@
 //----------------------------------------------------------------------------------------------------------------------
 // Module Functions Declarations
 //----------------------------------------------------------------------------------------------------------------------
+
+CXX_GUARD_START
+
 // Initialize OpenGL extensions using platform-specific loader
 LEAPI void leLoadExtensions( void * loaderPtr );               // Load the required required OpenGL extensions
 LEAPI void leEnable( unsigned int capability, int enable );    // Enable or disable a GL capability
@@ -83,6 +98,8 @@ LEAPI void leDrawVertexArray( int offset, int count );              // Draw vert
 LEAPI void leStencilFunc( int func, int ref, unsigned int mask ); // Set stencil test function, reference value and mask
 LEAPI void leStencilOp( int sfail, int dpfail, int dppass );      // Set stencil operations for different test outcomes
 LEAPI void leStencilMask( unsigned int mask );                    // Control which bits in stencil buffer are writable
+
+CXX_GUARD_END
 
 //**********************************************************************************************************************
 //
