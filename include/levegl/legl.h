@@ -50,7 +50,6 @@
 #    define LEAPI
 #endif
 
-
 // C++ compatibility, preventing name mangling
 #if defined( __cplusplus )
 /* clang-format off */
@@ -63,15 +62,37 @@
 #endif
 
 //----------------------------------------------------------------------------------------------------------------------
+// Types & Structures Definitions
+//----------------------------------------------------------------------------------------------------------------------
+#if defined( GRAPHICS_API_OPENGL_33 ) || defined( GRAPHICS_API_OPENGL_ES2 )
+
+// Current legl State and Configs
+typedef struct leglContext
+{
+    struct
+    {
+        int framebufferWidth;  // Current framebuffer width
+        int framebufferHeight; // Current framebuffer height
+    } State;
+} leglContext;
+
+typedef void * ( *leglLoadProc )( const char * name );
+#endif // defined( GRAPHICS_API_OPENGL_33 ) || defined ( GRAPHICS_API_OPENGL_ES2 )
+
+//----------------------------------------------------------------------------------------------------------------------
 // Global Variables Definition
 //----------------------------------------------------------------------------------------------------------------------
-// ...
+#if defined( GRAPHICS_API_OPENGL_33 ) || defined( GRAPHICS_API_OPENGL_ES2 )
+static leglContext leState = { 0 };
+#endif // GRAPHICS_API_OPENGL_33 || GRAPHICS_API_OPENGL_ES2
 
 //----------------------------------------------------------------------------------------------------------------------
 // Module Functions Declarations
 //----------------------------------------------------------------------------------------------------------------------
 
 CXX_GUARD_START
+
+LEAPI void leInit( int width, int height ); // Initialize OpenGL states
 
 // Initialize OpenGL extensions using platform-specific loader
 LEAPI void leLoadExtensions( void * loaderPtr );               // Load the required required OpenGL extensions
@@ -138,16 +159,42 @@ CXX_GUARD_END
 #    endif
 
 //----------------------------------------------------------------------------------------------------------------------
-// Types & Structures Definitions
-//----------------------------------------------------------------------------------------------------------------------
-#    if defined( GRAPHICS_API_OPENGL_33 ) || defined( GRAPHICS_API_OPENGL_ES2 )
-typedef void * ( *leglLoadProc )( const char * name );
-#    endif // defined( GRAPHICS_API_OPENGL_33 ) || defined ( GRAPHICS_API_OPENGL_ES2 )
-
-//----------------------------------------------------------------------------------------------------------------------
 // Module Functions Definitions
 //----------------------------------------------------------------------------------------------------------------------
 /* ------------------ Core OpenGL Functions ------------------ */
+
+// Initialize OpenGL states
+void
+leInit( int width, int height )
+{
+    // Initialize OpenGL default states
+    //----------------------------------------------------------
+    // Depth test
+    glDepthFunc( GL_LEQUAL ); // Depth testing to apply
+
+    // Blending mode
+    glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA ); // Color blending function
+    glEnable( GL_BLEND );                                // Enable color blending allowing transparencies
+
+    // Culling
+    glCullFace( GL_BACK );    // Cull the back face (default)
+    glFrontFace( GL_CCW );    // Front face are defined counter clockwise (default)
+    glEnable( GL_CULL_FACE ); // Enable backface culling
+
+#    if defined( GRAPHICS_API_OPENGL_33 ) || defined( GRAPHICS_API_OPENGL_ES2 )
+    // Keep screen size
+    leState.State.framebufferWidth  = width;
+    leState.State.framebufferHeight = height;
+#    endif
+
+    TRACELOG( LOG_INFO, "LEGL: Default OpenGL state initialized successfully" );
+
+    // Color/Depth buffers clear
+    glClearColor( 0.0f, 0.0f, 0.0f, 1.0f );               // Set clear color
+    glClearDepth( 1.0f );                                 // Set clear depth value
+    glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT ); // Clear color and depth buffers
+}
+
 // Load OpenGL extensions using GLAD with platform-specific function loader
 void
 leLoadExtensions( void * loaderPtr )

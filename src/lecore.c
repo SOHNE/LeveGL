@@ -45,7 +45,6 @@
 
 #define LEGL_IMPLEMENTATION
 #include "levegl/legl.h"
-#undef LEGL_IMPLEMENTATION
 
 #include <math.h>
 #include <string.h>
@@ -82,6 +81,8 @@ InitWindow( int width, int height, const char * title )
     InitPlatform();
 
     TRACELOG( LOG_INFO, "Window initialized successfully" );
+
+    leInit( core.window.screen.width, core.window.screen.height );
 }
 
 void
