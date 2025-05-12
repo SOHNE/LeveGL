@@ -61,6 +61,26 @@
 #    define CXX_GUARD_END
 #endif
 
+/* Ensure TRACELOG macros */
+#    ifndef TRACELOG
+#        define TRACELOG( level, ... ) ( (void)( 0 ) )
+#        define TRACELOGD( ... )       ( (void)( 0 ) )
+#    endif // !TRACELOG
+
+/* Custom memory allocators */
+#    ifndef LE_MALLOC
+#        define LE_MALLOC( b ) malloc( b )
+#    endif
+#    ifndef LE_CALLOC
+#        define LE_CALLOC( c, b ) calloc( ( c ), ( b ) )
+#    endif
+#    ifndef LE_REALLOC
+#        define LE_REALLOC( p, b ) realloc( ( p ), ( b ) )
+#    endif
+#    ifndef LE_FREE
+#        define LE_FREE( p ) free( p )
+#    endif
+
 //----------------------------------------------------------------------------------------------------------------------
 // Types & Structures Definitions
 //----------------------------------------------------------------------------------------------------------------------
@@ -136,26 +156,6 @@ CXX_GUARD_END
 #    elif defined( GRAPHICS_API_OPENGL_ES2 )
 #        define GLAD_GLES2_IMPLEMENTATION
 #        include "glad/gles2.h"
-#    endif
-
-/* Ensure TRACE macros */
-#    if false == defined( TRACELOG )
-#        define TRACELOG( level, ... ) ( (void)( 0 ) )
-#        define TRACELOGD( ... )       ( (void)( 0 ) )
-#    endif // !TRACELOG
-
-/* Custom memory allocators */
-#    ifndef LE_MALLOC
-#        define LE_MALLOC( bytes ) malloc( bytes )
-#    endif
-#    ifndef LE_CALLOC
-#        define LE_CALLOC( count, bytes ) calloc( ( count ), ( bytes ) )
-#    endif
-#    ifndef LE_REALLOC
-#        define LE_REALLOC( ptr, bytes ) realloc( ( ptr ), ( bytes ) )
-#    endif
-#    ifndef LE_FREE
-#        define LE_FREE( ptr ) free( ptr )
 #    endif
 
 //----------------------------------------------------------------------------------------------------------------------
