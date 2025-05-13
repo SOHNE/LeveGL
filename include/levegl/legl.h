@@ -62,24 +62,24 @@
 #endif
 
 /* Ensure TRACELOG macros */
-#    ifndef TRACELOG
-#        define TRACELOG( level, ... ) ( (void)( 0 ) )
-#        define TRACELOGD( ... )       ( (void)( 0 ) )
-#    endif // !TRACELOG
+#ifndef TRACELOG
+#    define TRACELOG( level, ... ) ( (void)( 0 ) )
+#    define TRACELOGD( ... )       ( (void)( 0 ) )
+#endif // !TRACELOG
 
 /* Custom memory allocators */
-#    ifndef LE_MALLOC
-#        define LE_MALLOC( b ) malloc( b )
-#    endif
-#    ifndef LE_CALLOC
-#        define LE_CALLOC( c, b ) calloc( ( c ), ( b ) )
-#    endif
-#    ifndef LE_REALLOC
-#        define LE_REALLOC( p, b ) realloc( ( p ), ( b ) )
-#    endif
-#    ifndef LE_FREE
-#        define LE_FREE( p ) free( p )
-#    endif
+#ifndef LE_MALLOC
+#    define LE_MALLOC( b ) malloc( b )
+#endif
+#ifndef LE_CALLOC
+#    define LE_CALLOC( c, b ) calloc( ( c ), ( b ) )
+#endif
+#ifndef LE_REALLOC
+#    define LE_REALLOC( p, b ) realloc( ( p ), ( b ) )
+#endif
+#ifndef LE_FREE
+#    define LE_FREE( p ) free( p )
+#endif
 
 //----------------------------------------------------------------------------------------------------------------------
 // Types & Structures Definitions
