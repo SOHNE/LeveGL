@@ -176,19 +176,23 @@ CXX_GUARD_END
 void
 leInit( int width, int height )
 {
-    // Initialize OpenGL default states
+    // Initialize OpenGL
     //----------------------------------------------------------
     // Depth test
     glDepthFunc( GL_LEQUAL ); // Depth testing to apply
 
     // Blending mode
     glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA ); // Color blending function
-    glEnable( GL_BLEND );                                // Enable color blending allowing transparencies
+    glEnable( GL_BLEND );                                // Enable color blending, allowing transparencies
 
     // Culling
-    glCullFace( GL_BACK );    // Cull the back face (default)
-    glFrontFace( GL_CCW );    // Front face are defined counter clockwise (default)
-    glEnable( GL_CULL_FACE ); // Enable backface culling
+    glCullFace( GL_BACK );                    // Cull the back face
+    glFrontFace( GL_CCW );                    // Front face as counter clockwise
+    glEnable( GL_CULL_FACE );                 // Enable backface culling
+
+#    if defined( GRAPHICS_API_OPENGL_33 )
+    glEnable( GL_TEXTURE_CUBE_MAP_SEAMLESS ); // Enable seamless cubemap texture accesses
+#    endif
 
 #    if defined( GRAPHICS_API_OPENGL_33 ) || defined( GRAPHICS_API_OPENGL_ES2 )
     // Keep screen size
@@ -199,6 +203,7 @@ leInit( int width, int height )
     TRACELOG( LOG_INFO, "LEGL: Default OpenGL state initialized successfully" );
 
     // Color/Depth buffers clear
+    //----------------------------------------------------------
     glClearColor( 0.0f, 0.0f, 0.0f, 1.0f );               // Set clear color
     glClearDepth( 1.0f );                                 // Set clear depth value
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT ); // Clear color and depth buffers
