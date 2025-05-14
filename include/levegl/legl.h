@@ -81,6 +81,11 @@
 #    define LE_FREE( p ) free( p )
 #endif
 
+/* Ensure OpenGL API version */
+#if !defined( GRAPHICS_API_OPENGL_33 ) && !defined( GRAPHICS_API_OPENGL_ES2 ) && !defined( GRAPHICS_API_OPENGL_ES3 )
+#    define GRAPHICS_API_OPENGL_33
+#endif
+
 //----------------------------------------------------------------------------------------------------------------------
 // Types & Structures Definitions
 //----------------------------------------------------------------------------------------------------------------------
