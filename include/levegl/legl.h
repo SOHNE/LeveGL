@@ -173,7 +173,7 @@ CXX_GUARD_END
 /* ------------------ Core OpenGL Functions ------------------ */
 
 // Initialize OpenGL states
-void
+INLINE void
 leInit( int width, int height )
 {
     // Initialize OpenGL
@@ -210,7 +210,7 @@ leInit( int width, int height )
 }
 
 // Load OpenGL extensions using GLAD with platform-specific function loader
-void
+INLINE void
 leLoadExtensions( void * loaderPtr )
 {
 #    if defined( GRAPHICS_API_OPENGL_33 )
@@ -335,7 +335,7 @@ leLoadExtensions( void * loaderPtr )
 }
 
 // Enable or disable a GL capability
-void
+INLINE void
 leEnable( uint32_t capability, int enable )
 {
     if( enable )
@@ -345,28 +345,28 @@ leEnable( uint32_t capability, int enable )
 }
 
 // Clear the color buffer with the provided color values
-void
+INLINE void
 leClearColor( float r, float g, float b, float a )
 {
     glClearColor( r, g, b, a );
 }
 
 // Clear the given mask
-void
+INLINE void
 leClear( unsigned int mask )
 {
     glClear( (GLbitfield)mask );
 }
 
 // Clear both color and depth buffers
-void
+INLINE void
 leClearScreenBuffers( void )
 {
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 }
 
 // Set the viewport
-void
+INLINE void
 leViewport( int x, int y, int width, int height )
 {
     glViewport( x, y, width, height );
@@ -374,7 +374,7 @@ leViewport( int x, int y, int width, int height )
 
 /* ------------------ Framebuffer Functions ------------------ */
 // Create an empty framebuffer object
-unsigned int
+INLINE unsigned int
 leCreateFramebuffer( void )
 {
     unsigned int fboId = 0;
@@ -388,7 +388,7 @@ leCreateFramebuffer( void )
 }
 
 // Delete a framebuffer object
-void
+INLINE void
 leDeleteFramebuffer( unsigned int fb )
 {
 #    if defined( GRAPHICS_API_OPENGL_33 ) || defined( GRAPHICS_API_OPENGL_ES2 )
@@ -403,7 +403,7 @@ leDeleteFramebuffer( unsigned int fb )
 }
 
 // Bind framebuffer (FBO)
-void
+INLINE void
 leBindFramebuffer( unsigned int target, unsigned int framebuffer )
 {
 #    if defined( GRAPHICS_API_OPENGL_33 ) || defined( GRAPHICS_API_OPENGL_ES2 )
@@ -412,7 +412,7 @@ leBindFramebuffer( unsigned int target, unsigned int framebuffer )
 }
 
 // Unbind framebuffer
-void
+INLINE void
 leUnbindFramebuffer( unsigned int target )
 {
 #    if defined( GRAPHICS_API_OPENGL_33 ) || defined( GRAPHICS_API_OPENGL_ES2 )
@@ -420,7 +420,7 @@ leUnbindFramebuffer( unsigned int target )
 #    endif
 }
 
-int
+INLINE int
 leCheckFramebufferStatus( unsigned int target )
 {
     int status = 0;
@@ -434,14 +434,14 @@ leCheckFramebufferStatus( unsigned int target )
 
 /* -------------------- Drawing Functions -------------------- */
 //Draw arrays (GL_TRIANGLES, GL_LINES, ...)
-LEAPI void
+INLINE void
 leDrawArrays( unsigned int mode, int first, int count )
 {
     glDrawArrays( mode, first, count );
 }
 
 // Draw vertex array
-LEAPI void
+INLINE void
 leDrawVertexArray( int offset, int count )
 {
     leDrawArrays( GL_TRIANGLES, offset, count );
@@ -449,7 +449,7 @@ leDrawVertexArray( int offset, int count )
 
 /* -------------------- Stencil Functions -------------------- */
 // Set the stencil test function and reference value
-void
+INLINE void
 leStencilFunc( int func, int ref, unsigned int mask )
 {
     // Controls how stencil test is performed and which fragments pass
@@ -460,7 +460,7 @@ leStencilFunc( int func, int ref, unsigned int mask )
 }
 
 // Set the stencil buffer operations
-void
+INLINE void
 leStencilOp( int sfail, int dpfail, int dppass )
 {
     // Specifies what happens to the stencil buffer value under different test outcomes
@@ -471,7 +471,7 @@ leStencilOp( int sfail, int dpfail, int dppass )
 }
 
 // Control which bits in the stencil buffer are writable
-void
+INLINE void
 leStencilMask( unsigned int mask )
 {
     // Sets a bit mask that controls which bits in the stencil buffer can be modified
