@@ -53,7 +53,7 @@ IsAnyKeyPressed( void )
 
 // Check if the given key is been pressed
 INLINE bool
-IsKeyPressed( int key )
+IsKeyPressed( const int key )
 {
     if( UNLIKELY( KEY_NULL >= key || KEYBOARD_KEY_COUNT <= key ) ) return false;
 
@@ -62,7 +62,7 @@ IsKeyPressed( int key )
 
 // Check if the given key is repeated across frames
 INLINE bool
-IsKeyPressedRepeated( int key )
+IsKeyPressedRepeated( const int key )
 {
     if( UNLIKELY( KEY_NULL >= key || KEYBOARD_KEY_COUNT <= key ) ) return false;
 
@@ -71,7 +71,7 @@ IsKeyPressedRepeated( int key )
 
 // Check if the given key is being pressed
 INLINE bool
-IsKeyDown( int key )
+IsKeyDown( const int key )
 {
     if( UNLIKELY( KEY_NULL >= key || KEYBOARD_KEY_COUNT <= key ) ) return false;
 
@@ -80,7 +80,7 @@ IsKeyDown( int key )
 
 // Check if the given key has been released once
 INLINE bool
-IsKeyReleased( int key )
+IsKeyReleased( const int key )
 {
     if( UNLIKELY( KEY_NULL >= key || KEYBOARD_KEY_COUNT <= key ) ) return false;
 
@@ -89,7 +89,7 @@ IsKeyReleased( int key )
 
 // Check if the key is NOT being pressed
 INLINE bool
-IsKeyUp( int key )
+IsKeyUp( const int key )
 {
     if( UNLIKELY( KEY_NULL >= key || KEYBOARD_KEY_COUNT <= key ) ) return false;
 
