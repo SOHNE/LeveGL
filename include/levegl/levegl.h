@@ -122,31 +122,59 @@ typedef enum bool
 #endif
 
 // Predefined colors
-#define BLACK     ( Color ) { 000.F / 255.F, 000.F / 255.F, 000.F / 255.F, 1.F }
-#define WHITE     ( Color ) { 255.F / 255.F, 255.F / 255.F, 255.F / 255.F, 1.F }
-#define GRAY      ( Color ) { 128.F / 255.F, 128.F / 255.F, 128.F / 255.F, 1.F }
-#define DARKGRAY  ( Color ) { 064.F / 255.F, 064.F / 255.F, 064.F / 255.F, 1.F }
-#define LIGHTGRAY ( Color ) { 192.F / 255.F, 192.F / 255.F, 192.F / 255.F, 1.F }
+// Monochrome
+#define BLACK       ( Color ) { 0.000000F, 0.000000F, 0.000000F, 1.F }
+#define WHITE       ( Color ) { 1.000000F, 1.000000F, 1.000000F, 1.F }
+#define GRAY        ( Color ) { 0.501961F, 0.501961F, 0.501961F, 1.F }
+#define DARKGRAY    ( Color ) { 0.250980F, 0.250980F, 0.250980F, 1.F }
+#define LIGHTGRAY   ( Color ) { 0.752941F, 0.752941F, 0.752941F, 1.F }
 
-#define RED       ( Color ) { 255.F / 255.F, 000.F / 255.F, 000.F / 255.F, 1.F }
-#define GREEN     ( Color ) { 000.F / 255.F, 255.F / 255.F, 000.F / 255.F, 1.F }
-#define BLUE      ( Color ) { 000.F / 255.F, 000.F / 255.F, 255.F / 255.F, 1.F }
+// Primary
+#define RED         ( Color ) { 1.000000F, 0.000000F, 0.000000F, 1.F }
+#define GREEN       ( Color ) { 0.000000F, 1.000000F, 0.000000F, 1.F }
+#define BLUE        ( Color ) { 0.000000F, 0.000000F, 1.000000F, 1.F }
 
-#define YELLOW    ( Color ) { 255.F / 255.F, 255.F / 255.F, 000.F / 255.F, 1.F }
-#define ORANGE    ( Color ) { 255.F / 255.F, 165.F / 255.F, 000.F / 255.F, 1.F }
-#define PURPLE    ( Color ) { 128.F / 255.F, 000.F / 255.F, 128.F / 255.F, 1.F }
-#define PINK      ( Color ) { 255.F / 255.F, 192.F / 255.F, 203.F / 255.F, 1.F }
-#define BROWN     ( Color ) { 165.F / 255.F, 042.F / 255.F, 042.F / 255.F, 1.F }
-#define MAGENTA   ( Color ) { 255.F / 255.F, 000.F / 255.F, 255.F / 255.F, 1.F }
-#define CYAN      ( Color ) { 000.F / 255.F, 255.F / 255.F, 255.F / 255.F, 1.F }
-#define LIME      ( Color ) { 150.F / 255.F, 255.F / 255.F, 000.F / 255.F, 1.F }
-#define MAROON    ( Color ) { 128.F / 255.F, 000.F / 255.F, 000.F / 255.F, 1.F }
-#define NAVY      ( Color ) { 000.F / 255.F, 000.F / 255.F, 128.F / 255.F, 1.F }
+// Secondary
+#define YELLOW      ( Color ) { 1.000000F, 1.000000F, 0.000000F, 1.F }
+#define MAGENTA     ( Color ) { 1.000000F, 0.000000F, 1.000000F, 1.F }
+#define CYAN        ( Color ) { 0.000000F, 1.000000F, 1.000000F, 1.F }
+
+// Mixed
+#define ORANGE      ( Color ) { 1.000000F, 0.647059F, 0.000000F, 1.F }
+#define PURPLE      ( Color ) { 0.501961F, 0.000000F, 0.501961F, 1.F }
+#define PINK        ( Color ) { 1.000000F, 0.752941F, 0.796078F, 1.F }
+#define BROWN       ( Color ) { 0.647059F, 0.164706F, 0.164706F, 1.F }
+#define LIME        ( Color ) { 0.588235F, 1.000000F, 0.000000F, 1.F }
+
+// Dark variants
+#define MAROON      ( Color ) { 0.501961F, 0.000000F, 0.000000F, 1.F }
+#define NAVY        ( Color ) { 0.000000F, 0.000000F, 0.501961F, 1.F }
+
+// Leve (light pastel variants)
+#define LEVE_RED    ( Color ) { 0.968627F, 0.823529F, 0.807843F, 1.F }
+#define LEVE_GREEN  ( Color ) { 0.847059F, 0.968627F, 0.760784F, 1.F }
+#define LEVE_BLUE   ( Color ) { 0.827451F, 0.866667F, 0.968627F, 1.F }
+#define LEVE_YELLOW ( Color ) { 0.988235F, 0.960784F, 0.686275F, 1.F }
+#define LEVE_PINK   ( Color ) { 0.984314F, 0.811765F, 0.909804F, 1.F }
 
 // Colors alias
-#define GREY      GRAY
-#define DARKGREY  DARKGRAY
-#define LIGHTGREY LIGHTGRAY
+#define GREY        GRAY
+#define DARKGREY    DARKGRAY
+#define LIGHTGREY   LIGHTGRAY
+
+#define AQUA        CYAN
+#define FUCHSIA     MAGENTA
+
+#define VIOLET      PURPLE
+#define INDIGO      NAVY
+#define CRIMSON     MAROON
+#define CHARTREUSE  LIME
+
+#define GOLD        YELLOW
+#define SILVER      LIGHTGRAY
+#define SALMON      PINK
+#define CORAL       ORANGE
+#define CHOCOLATE   BROWN
 
 // TODO: Design and implement lemath.h
 #ifndef PI
