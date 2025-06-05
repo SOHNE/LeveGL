@@ -100,8 +100,11 @@ typedef struct leglContext
 {
     struct
     {
-        int framebufferWidth;  // Current framebuffer width
-        int framebufferHeight; // Current framebuffer height
+        int framebufferWidth;          // Current framebuffer width
+        int framebufferHeight;         // Current framebuffer height
+
+        unsigned int defaultVShaderId; // Default vertex shader id
+        unsigned int defaultFShaderId; // Default fragment shader id
     } State;
 } leglContext;
 
@@ -113,6 +116,17 @@ typedef void * ( *leglLoadProc )( const char * name );
 //----------------------------------------------------------------------------------------------------------------------
 #if defined( GRAPHICS_API_OPENGL_33 ) || defined( GRAPHICS_API_OPENGL_ES2 )
 static leglContext leState = { 0 };
+#endif // GRAPHICS_API_OPENGL_33 || GRAPHICS_API_OPENGL_ES2
+
+//----------------------------------------------------------------------------------------------------------------------
+// Module Specific Functions Declarations
+//----------------------------------------------------------------------------------------------------------------------
+#if defined( GRAPHICS_API_OPENGL_33 ) || defined( GRAPHICS_API_OPENGL_ES2 )
+// Load default shader
+static void leLoadDefaultShaders( void );
+// Unload default shader
+static void leUnloadShaderDefault( void );
+
 #endif // GRAPHICS_API_OPENGL_33 || GRAPHICS_API_OPENGL_ES2
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -176,6 +190,10 @@ CXX_GUARD_END
 INLINE void
 leInit( int width, int height )
 {
+#    if defined( GRAPHICS_API_OPENGL_33 ) || defined( GRAPHICS_API_OPENGL_ES2 )
+    leLoadDefaultShaders();
+#    endif
+
     // Initialize OpenGL
     //----------------------------------------------------------
     // Depth test
@@ -370,6 +388,19 @@ INLINE void
 leViewport( int x, int y, int width, int height )
 {
     glViewport( x, y, width, height );
+}
+
+/* -------------------- Shader Functions --------------------- */
+// Load default shader
+INLINE void
+leLoadDefaultShaders( void )
+{
+}
+
+// Unload default shader
+INLINE void
+leUnloadShaderDefault( void )
+{
 }
 
 /* ------------------ Framebuffer Functions ------------------ */
