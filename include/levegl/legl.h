@@ -50,6 +50,10 @@
 #    define LEAPI
 #endif
 
+#ifndef INLINE
+#    define INLINE inline
+#endif
+
 // C++ compatibility, preventing name mangling
 #if defined( __cplusplus )
 /* clang-format off */
@@ -100,12 +104,18 @@ typedef struct leglContext
 {
     struct
     {
-        int framebufferWidth;          // Current framebuffer width
-        int framebufferHeight;         // Current framebuffer height
+        int framebufferWidth;  // Current framebuffer width
+        int framebufferHeight; // Current framebuffer height
 
+    } State;
+
+    struct
+    {
         unsigned int defaultVShaderId; // Default vertex shader id
         unsigned int defaultFShaderId; // Default fragment shader id
-    } State;
+
+    } Shader;
+
 } leglContext;
 
 typedef void * ( *leglLoadProc )( const char * name );
@@ -153,6 +163,10 @@ LEAPI void         leDeleteFramebuffer( unsigned int fb );                     /
 LEAPI void leBindFramebuffer( unsigned int target, unsigned int framebuffer ); // Bind the given framebuffer (FBO)
 LEAPI void leUnbindFramebuffer( unsigned int target );                         // Unbind the given framebuffer(FBO)
 LEAPI int  leCheckFramebufferStatus( unsigned int target );                    // Check if a framebuffer is complete
+
+// Shader
+LEAPI unsigned int leCompileShader( const char * shaderCode, int type );              // Compile shader. Return its id
+LEAPI unsigned int leLoadShaderProgram( unsigned int vertexId, unsigned int fragId ); // Load custom shader program
 
 // Drawing
 LEAPI void leDrawArrays( unsigned int mode, int first, int count ); //Draw arrays (GL_TRIANGLES, GL_LINES, ...)
@@ -395,12 +409,122 @@ leViewport( int x, int y, int width, int height )
 INLINE void
 leLoadDefaultShaders( void )
 {
+    // Shader configuration based on graphics API
+    //----------------------------------------------------------
+    struct ShaderConfig
+    {
+        const char * glslVersion;
+        const char * inKeyword;
+        const char * outKeyword;
+        const char * varyingKeyword;
+        const char * textureFunc;
+        const char * fragColorOutput;
+        const char * fragColorDeclare;
+    };
+
+    struct ShaderConfig config = { 0 };
+
+    // Populate `config`
+    //----------------------------------------------------------
+#    if defined( GRAPHICS_API_OPENGL_33 )
+    config.glslVersion      = "#version 330 core\n";
+    config.inKeyword        = "in";
+    config.outKeyword       = "out";
+    config.varyingKeyword   = "in";
+    config.textureFunc      = "texture";
+    config.fragColorOutput  = "finalColor";
+    config.fragColorDeclare = "out vec4 finalColor;\n";
+
+#    elif defined( GRAPHICS_API_OPENGL_ES3 )
+    config.glslVersion      = "#version 300 es\nprecision mediump float;\n";
+    config.inKeyword        = "in";
+    config.outKeyword       = "out";
+    config.varyingKeyword   = "in";
+    config.textureFunc      = "texture";
+    config.fragColorOutput  = "fragColor";
+    config.fragColorDeclare = "out vec4 fragColor;\n";
+
+#    elif defined( GRAPHICS_API_OPENGL_ES2 )
+    config.glslVersion      = "#version 100\nprecision mediump float;\n";
+    config.inKeyword        = "attribute";
+    config.outKeyword       = "varying";
+    config.varyingKeyword   = "varying";
+    config.textureFunc      = "texture2D";
+    config.fragColorOutput  = "gl_FragColor";
+    config.fragColorDeclare = ""; // gl_FragColor is built-in
+#    endif
+
+    // Build vertex shader
+    //----------------------------------------------------------
+    char defaultVShaderCode[1024];
+    snprintf( defaultVShaderCode, sizeof( defaultVShaderCode ),
+              "%s"                        // GLSL version
+              "%s vec3 vertexPosition;\n" // Vertex position input
+              "%s vec2 vertexTexCoord;\n" // Texture coordinate input
+              "%s vec4 vertexColor;\n"    // Vertex color input
+              "%s vec2 fragTexCoord;\n"   // Texture coordinate output
+              "%s vec4 fragColor;\n"      // Vertex color output
+              "uniform mat4 mvp;\n"       // Model-view-projection matrix
+              "void main()\n"
+              "{\n"
+              "    fragTexCoord = vertexTexCoord;\n"
+              "    fragColor = vertexColor;\n"
+              "    gl_Position = mvp * vec4(vertexPosition, 1.0);\n"
+              "}\n",
+              config.glslVersion, config.inKeyword, config.inKeyword, config.inKeyword, // Vertex inputs
+              config.outKeyword, config.outKeyword                                      // Vertex outputs
+    );
+
+    // Build fragment shader
+    //----------------------------------------------------------
+    char defaultFShaderCode[1024];
+    snprintf( defaultFShaderCode, sizeof( defaultFShaderCode ),
+              "%s"                            // GLSL version
+              "%s vec2 fragTexCoord;\n"       // Texture coordinate input from vertex shader
+              "%s vec4 fragColor;\n"          // Color input from vertex shader
+              "%s"                            // Fragment color output declaration
+              "uniform sampler2D texture0;\n" // Texture sampler
+              "uniform vec4 colDiffuse;\n"    // Diffuse color uniform
+              "void main()\n"
+              "{\n"
+              "    vec4 texelColor = %s(texture0, fragTexCoord);\n"
+              "    %s = texelColor * colDiffuse * fragColor;\n"
+              "}\n",
+              config.glslVersion, config.varyingKeyword, config.varyingKeyword, // Fragment inputs
+              config.fragColorDeclare,                                          // Output declaration
+              config.textureFunc,                                               // Texture sampling function
+              config.fragColorOutput                                            // Fragment output target
+    );
+
+    // Compile shaders
+    //----------------------------------------------------------
+    leState.Shader.defaultVShaderId = leCompileShader( defaultVShaderCode, GL_VERTEX_SHADER );
+    leState.Shader.defaultFShaderId = leCompileShader( defaultFShaderCode, GL_FRAGMENT_SHADER );
 }
 
 // Unload default shader
 INLINE void
 leUnloadShaderDefault( void )
 {
+    // TODO: Implement unloading default shaders and textures
+}
+
+// Compile shader. Return its id
+INLINE unsigned int
+leCompileShader( const char * shaderCode, int type )
+{
+    unsigned int shader = 0;
+
+#    if defined( GRAPHICS_API_OPENGL_33 ) || defined( GRAPHICS_API_OPENGL_ES2 )
+    shader = glCreateShader( type );
+    glShaderSource( shader, 1, &shaderCode, NULL );
+
+    GLint success = 0;
+    glCompileShader( shader );
+
+#    endif
+
+    return shader;
 }
 
 /* ------------------ Framebuffer Functions ------------------ */
