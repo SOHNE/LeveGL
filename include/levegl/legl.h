@@ -94,12 +94,17 @@
 #    define glClearDepth glClearDepthf
 #endif
 
-#define SUPPORTS_PROGRAMMABLE_PIPELINE ( defined( GRAPHICS_API_OPENGL_33 ) || defined( GRAPHICS_API_OPENGL_ES2 ) )
+/* Determines if the system supports a programmable pipeline (1) or only fixed-function (0) */
+#if defined( GRAPHICS_API_OPENGL_33 ) || defined( GRAPHICS_API_OPENGL_ES2 )
+#    define SUPPORTS_PROGRAMMABLE_PIPELINE 1
+#else
+#    define SUPPORTS_PROGRAMMABLE_PIPELINE 0
+#endif
 
 //----------------------------------------------------------------------------------------------------------------------
 // Types & Structures Definitions
 //----------------------------------------------------------------------------------------------------------------------
-#if defined( GRAPHICS_API_OPENGL_33 ) || defined( GRAPHICS_API_OPENGL_ES2 )
+#if SUPPORTS_PROGRAMMABLE_PIPELINE
 
 // Current legl State and Configs
 typedef struct leglContext
@@ -126,19 +131,23 @@ typedef struct leglContext
 } leglContext;
 
 typedef void * ( *leglLoadProc )( const char * name );
-#endif // defined( GRAPHICS_API_OPENGL_33 ) || defined ( GRAPHICS_API_OPENGL_ES2 )
+
+#endif // SUPPORTS_PROGRAMMABLE_PIPELINE
 
 //----------------------------------------------------------------------------------------------------------------------
 // Global Variables Definition
 //----------------------------------------------------------------------------------------------------------------------
-#if defined( GRAPHICS_API_OPENGL_33 ) || defined( GRAPHICS_API_OPENGL_ES2 )
+#if SUPPORTS_PROGRAMMABLE_PIPELINE
+
 static leglContext leState = { 0 };
-#endif // GRAPHICS_API_OPENGL_33 || GRAPHICS_API_OPENGL_ES2
+
+#endif // SUPPORTS_PROGRAMMABLE_PIPELINE
 
 //----------------------------------------------------------------------------------------------------------------------
 // Module Specific Functions Declarations
 //----------------------------------------------------------------------------------------------------------------------
-#if defined( GRAPHICS_API_OPENGL_33 ) || defined( GRAPHICS_API_OPENGL_ES2 )
+#if SUPPORTS_PROGRAMMABLE_PIPELINE
+
 // Load default shader
 static void leLoadDefaultShaders( void );
 // Unload default shader
