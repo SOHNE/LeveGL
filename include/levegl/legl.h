@@ -176,6 +176,8 @@ LEAPI int  leCheckFramebufferStatus( unsigned int target );                    /
 LEAPI unsigned int leCompileShader( const char * shaderCode, int type );              // Compile shader. Return its id
 LEAPI unsigned int leLoadShaderProgram( unsigned int vertexId, unsigned int fragId ); // Load custom shader program
 
+LEAPI int leGetShaderLocationUniform( unsigned int shaderId, const char * uniformName ); // Get shader location uniform
+
 // Drawing
 LEAPI void leDrawArrays( unsigned int mode, int first, int count ); //Draw arrays (GL_TRIANGLES, GL_LINES, ...)
 LEAPI void leDrawVertexArray( int offset, int count );              // Draw vertex array
@@ -623,6 +625,19 @@ leLoadShaderProgram( unsigned int vertexId, unsigned int fragId )
 #    endif
 
     return program;
+}
+
+// Get shader location uniform
+INLINE int
+leGetShaderLocationUniform( unsigned int shaderId, const char * uniformName )
+{
+    int location = -1;
+
+#    if SUPPORTS_PROGRAMMABLE_PIPELINE
+    location = glGetUniformLocation( shaderId, uniformName );
+#    endif
+
+    return location;
 }
 
 /* ------------------ Framebuffer Functions ------------------ */
