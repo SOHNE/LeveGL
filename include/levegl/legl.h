@@ -94,6 +94,8 @@
 #    define glClearDepth glClearDepthf
 #endif
 
+#define SUPPORTS_PROGRAMMABLE_PIPELINE ( defined( GRAPHICS_API_OPENGL_33 ) || defined( GRAPHICS_API_OPENGL_ES2 ) )
+
 //----------------------------------------------------------------------------------------------------------------------
 // Types & Structures Definitions
 //----------------------------------------------------------------------------------------------------------------------
@@ -151,6 +153,7 @@ static void leUnloadShaderDefault( void );
 CXX_GUARD_START
 
 LEAPI void leInit( int width, int height ); // Initialize OpenGL states
+LEAPI void leClose( void );                 // Deinitialize OpenGL states and unload default shader
 
 // Initialize OpenGL extensions using platform-specific loader
 LEAPI void leLoadExtensions( void * loaderPtr );               // Load the required required OpenGL extensions
@@ -209,7 +212,7 @@ CXX_GUARD_END
 INLINE void
 leInit( int width, int height )
 {
-#    if defined( GRAPHICS_API_OPENGL_33 ) || defined( GRAPHICS_API_OPENGL_ES2 )
+#    if SUPPORTS_PROGRAMMABLE_PIPELINE
     leLoadDefaultShaders();
 #    endif
 
@@ -231,7 +234,7 @@ leInit( int width, int height )
     glEnable( GL_TEXTURE_CUBE_MAP_SEAMLESS ); // Enable seamless cubemap texture accesses
 #    endif
 
-#    if defined( GRAPHICS_API_OPENGL_33 ) || defined( GRAPHICS_API_OPENGL_ES2 )
+#    if SUPPORTS_PROGRAMMABLE_PIPELINE
     // Keep screen size
     leState.State.framebufferWidth  = width;
     leState.State.framebufferHeight = height;
@@ -244,6 +247,17 @@ leInit( int width, int height )
     glClearColor( 0.0f, 0.0f, 0.0f, 1.0f );               // Set clear color
     glClearDepth( 1.0f );                                 // Set clear depth value
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT ); // Clear color and depth buffers
+}
+
+// Vertex Buffer Object deinitialization (memory free)
+void
+leClose( void )
+{
+#    if SUPPORTS_PROGRAMMABLE_PIPELINE
+    leUnloadShaderDefault();
+
+    TRACELOG( LOG_INFO, "LEGL: Deinitialized successfully" );
+#    endif
 }
 
 // Load OpenGL extensions using GLAD with platform-specific function loader
@@ -533,7 +547,14 @@ leLoadDefaultShaders( void )
 INLINE void
 leUnloadShaderDefault( void )
 {
-    // TODO: Implement unloading default shaders and textures
+    glUseProgram( 0 );
+
+    glDetachShader( leState.Shader.Default.ShaderId, leState.Shader.Default.VertId );
+    glDetachShader( leState.Shader.Default.ShaderId, leState.Shader.Default.FragId );
+    glDeleteShader( leState.Shader.Default.VertId );
+    glDeleteShader( leState.Shader.Default.FragId );
+
+    glDeleteProgram( leState.Shader.Default.ShaderId );
 }
 
 // Compile shader. Return its id
@@ -542,7 +563,7 @@ leCompileShader( const char * shaderCode, int type )
 {
     unsigned int shader = 0;
 
-#    if defined( GRAPHICS_API_OPENGL_33 ) || defined( GRAPHICS_API_OPENGL_ES2 )
+#    if SUPPORTS_PROGRAMMABLE_PIPELINE
     shader = glCreateShader( type );
     glShaderSource( shader, 1, &shaderCode, NULL );
 
@@ -560,7 +581,7 @@ leLoadShaderProgram( unsigned int vertexId, unsigned int fragId )
 {
     unsigned int program = 0;
 
-#    if defined( GRAPHICS_API_OPENGL_33 ) || defined( GRAPHICS_API_OPENGL_ES2 )
+#    if SUPPORTS_PROGRAMMABLE_PIPELINE
     GLint success = 0;
     program       = glCreateProgram();
 
@@ -611,7 +632,7 @@ leCreateFramebuffer( void )
 {
     unsigned int fboId = 0;
 
-#    if defined( GRAPHICS_API_OPENGL_33 ) || defined( GRAPHICS_API_OPENGL_ES2 )
+#    if SUPPORTS_PROGRAMMABLE_PIPELINE
     glGenFramebuffers( 1, &fboId );         // Create a single framebuffer object
     glBindFramebuffer( GL_FRAMEBUFFER, 0 ); // Unbind any framebuffer
 #    endif
@@ -623,7 +644,7 @@ leCreateFramebuffer( void )
 INLINE void
 leDeleteFramebuffer( unsigned int fb )
 {
-#    if defined( GRAPHICS_API_OPENGL_33 ) || defined( GRAPHICS_API_OPENGL_ES2 )
+#    if SUPPORTS_PROGRAMMABLE_PIPELINE
 
     // TODO: automatically delete depth or any attachment
 
@@ -638,7 +659,7 @@ leDeleteFramebuffer( unsigned int fb )
 INLINE void
 leBindFramebuffer( unsigned int target, unsigned int framebuffer )
 {
-#    if defined( GRAPHICS_API_OPENGL_33 ) || defined( GRAPHICS_API_OPENGL_ES2 )
+#    if SUPPORTS_PROGRAMMABLE_PIPELINE
     glBindFramebuffer( target, framebuffer );
 #    endif
 }
@@ -647,7 +668,7 @@ leBindFramebuffer( unsigned int target, unsigned int framebuffer )
 INLINE void
 leUnbindFramebuffer( unsigned int target )
 {
-#    if defined( GRAPHICS_API_OPENGL_33 ) || defined( GRAPHICS_API_OPENGL_ES2 )
+#    if SUPPORTS_PROGRAMMABLE_PIPELINE
     glBindFramebuffer( target, 0 );
 #    endif
 }
@@ -657,7 +678,7 @@ leCheckFramebufferStatus( unsigned int target )
 {
     int status = 0;
 
-#    if defined( GRAPHICS_API_OPENGL_33 ) || defined( GRAPHICS_API_OPENGL_ES2 )
+#    if SUPPORTS_PROGRAMMABLE_PIPELINE
     status = ( GL_FRAMEBUFFER_COMPLETE == glCheckFramebufferStatus( target ) ) ? 1 : 0;
 #    endif
 
