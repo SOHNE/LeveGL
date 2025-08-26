@@ -42,6 +42,7 @@ int GetScreenHeight( void );
 extern void PollInputEvents( void );
 
 // GLFW callbacks and window management
+static void ErrorCallback( int error, const char * description );
 static void FramebufferSizeCallback( GLFWwindow * window, int width, int height );
 static void KeyCallback( GLFWwindow * window, int key, int scancode, int action, int mods );
 
@@ -83,6 +84,8 @@ InitPlatform( void )
 {
     // Init
     //----------------------------------------------------------------------------
+    glfwSetErrorCallback( ErrorCallback );
+
     const GLFWallocator allocator = {
         .allocate   = AllocateWrapper,
         .deallocate = DeallocateWrapper,
@@ -223,6 +226,13 @@ void *
 GetWindowHandle( void )
 {
     return (void *)platform.handle;
+}
+
+// Execute on GLFW3 error
+static void
+ErrorCallback( int error, const char * description )
+{
+    TRACELOG( LOG_WARNING, "GLFW: error code=%d, description=\"%s\"", error, description );
 }
 
 static void
