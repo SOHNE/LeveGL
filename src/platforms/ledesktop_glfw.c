@@ -97,7 +97,7 @@ InitPlatform( void )
 
     if( GLFW_FALSE == glfwInit() )
         {
-            TRACELOG( LOG_ERROR, "Failed to initialize GLFW" );
+            TRACELOG( LOG_ERROR, "GLFW: Failed to initialize GLFW" );
             return -1;
         }
 
@@ -123,7 +123,7 @@ InitPlatform( void )
                                         core.window.title, NULL, NULL );
     if( !platform.handle )
         {
-            TRACELOG( LOG_ERROR, "Failed to create GLFW window" );
+            TRACELOG( LOG_ERROR, "GLFW: Failed to create GLFW window" );
             glfwTerminate();
             return -1;
         }
@@ -142,7 +142,7 @@ InitPlatform( void )
     glfwSetFramebufferSizeCallback( platform.handle, FramebufferSizeCallback );
     glfwSetKeyCallback( platform.handle, KeyCallback );
 
-    TRACELOG( LOG_INFO, "GLFW Initialized: %s", glfwGetVersionString() );
+    TRACELOG( LOG_INFO, "GLFW: %s", glfwGetVersionString() );
 
     return 0;
 }
