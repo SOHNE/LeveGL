@@ -45,12 +45,53 @@ extern void PollInputEvents( void );
 static void FramebufferSizeCallback( GLFWwindow * window, int width, int height );
 static void KeyCallback( GLFWwindow * window, int key, int scancode, int action, int mods );
 
+// Wrappers used by glfwInitAllocator
+static void * AllocateWrapper( size_t size, void * user );
+static void * ReallocateWrapper( void * block, size_t size, void * user );
+static void   DeallocateWrapper( void * block, void * user );
+
+//==============================================================================================================
+// MODULE INTERNAL FUNCTIONS DEFINITION
+//==============================================================================================================
+
+static void *
+AllocateWrapper( size_t size, void * user )
+{
+    UNUSED( user );
+    return (void *)( LV_MALLOC( size ) );
+}
+
+static void *
+ReallocateWrapper( void * block, size_t size, void * user )
+{
+    UNUSED( user );
+    return (void *)( LV_REALLOC( block, size ) );
+}
+
+static void
+DeallocateWrapper( void * block, void * user )
+{
+    UNUSED( user );
+    LV_FREE( block );
+}
+
 //==============================================================================================================
 // MODULE FUNCTIONS DEFINITIONS
 //==============================================================================================================
 int
 InitPlatform( void )
 {
+    // Init
+    //----------------------------------------------------------------------------
+    const GLFWallocator allocator = {
+        .allocate   = AllocateWrapper,
+        .deallocate = DeallocateWrapper,
+        .reallocate = ReallocateWrapper,
+        .user       = NULL,
+    };
+
+    glfwInitAllocator( &allocator );
+
     if( GLFW_FALSE == glfwInit() )
         {
             TRACELOG( LOG_ERROR, "Failed to initialize GLFW" );
