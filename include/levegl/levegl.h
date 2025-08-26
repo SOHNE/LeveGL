@@ -59,6 +59,7 @@
 #include "levegl/leversion.h"
 
 #include <stdarg.h> /* va_list */
+#include <stdlib.h> /* malloc, calloc, realloc, free */
 
 //==============================================================================================================
 // DEFINES
@@ -103,6 +104,20 @@
 #else
 #    define CXX_GUARD_START
 #    define CXX_GUARD_END
+#endif
+
+// Custom memory allocators
+#ifndef LV_MALLOC
+#    define LV_MALLOC( sz ) malloc( sz )
+#endif
+#ifndef LV_CALLOC
+#    define LV_CALLOC( n, sz ) calloc( n, sz )
+#endif
+#ifndef LV_REALLOC
+#    define LV_REALLOC( ptr, sz ) realloc( ptr, sz )
+#endif
+#ifndef LV_FREE
+#    define LV_FREE( ptr ) free( ptr )
 #endif
 
 // Boolean
