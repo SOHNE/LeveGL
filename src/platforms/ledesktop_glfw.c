@@ -150,15 +150,7 @@ InitPlatform( void )
 void
 ClosePlatform( void )
 {
-    // Check if window exists before destroying
-    if( NULL != platform.handle )
-        {
-            glfwDestroyWindow( platform.handle );
-            platform.handle = NULL;
-        }
-
-    // Terminate GLFW and reset error callback
-    glfwSetErrorCallback( NULL );
+    glfwDestroyWindow( platform.handle );
     glfwTerminate();
 }
 
