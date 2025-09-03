@@ -92,7 +92,6 @@ InitPlatform( void )
         .reallocate = ReallocateWrapper,
         .user       = NULL,
     };
-
     glfwInitAllocator( &allocator );
 
     if( GLFW_FALSE == glfwInit() )
@@ -101,26 +100,27 @@ InitPlatform( void )
             return -1;
         }
 
+    // Window hints
+    //----------------------------------------------------------------------------
     glfwDefaultWindowHints();
 
     // Set OpenGL version and profile.
     glfwWindowHint( GLFW_CONTEXT_VERSION_MAJOR, 3 );
     glfwWindowHint( GLFW_CONTEXT_VERSION_MINOR, 3 );
     glfwWindowHint( GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE );
+
 #ifdef __APPLE__
     glfwWindowHint( GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE );
 #endif
 
-    // Apply window hints based on our flag configuration:
-    // Set whether the window should be resizable.
     glfwWindowHint( GLFW_RESIZABLE, FLAG_CHECK( core.window.flags, FLAG_WINDOW_RESIZABLE ) ? GLFW_TRUE : GLFW_FALSE );
-
-    // Configure MSAA (multi-sample anti-aliasing) sample count.
     glfwWindowHint( GLFW_SAMPLES, FLAG_CHECK( core.window.flags, FLAG_MSAA_HINT ) ? 4 : 0 );
 
-    // Create the window.
+    // Window creation
+    //----------------------------------------------------------------------------
     platform.handle = glfwCreateWindow( (int)core.window.screen.width, (int)core.window.screen.height,
                                         core.window.title, NULL, NULL );
+
     if( !platform.handle )
         {
             TRACELOG( LOG_ERROR, "GLFW: Failed to create GLFW window" );
@@ -128,22 +128,26 @@ InitPlatform( void )
             return -1;
         }
 
+    // OpenGL context setup
+    //----------------------------------------------------------------------------
     glfwMakeContextCurrent( platform.handle );
-
     leLoadExtensions( (void *)glfwGetProcAddress );
 
-    // Set VSync based on our flag configuration.
     glfwSwapInterval( FLAG_CHECK( core.window.flags, FLAG_VSYNC_HINT ) ? 1 : 0 );
 
-    // Configure timing settings.
+    // Timing
+    //----------------------------------------------------------------------------
     core.timing.targetFPS     = 60;
     core.timing.lastFrameTime = GetTime();
 
+    // Callback configuration
+    //----------------------------------------------------------------------------
     glfwSetFramebufferSizeCallback( platform.handle, FramebufferSizeCallback );
     glfwSetKeyCallback( platform.handle, KeyCallback );
 
+    // Finalization
+    //----------------------------------------------------------------------------
     TRACELOG( LOG_INFO, "GLFW: %s", glfwGetVersionString() );
-
     return 0;
 }
 
