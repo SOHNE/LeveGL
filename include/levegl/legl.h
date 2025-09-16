@@ -85,6 +85,10 @@
 #    define LE_FREE( p ) free( p )
 #endif
 
+#ifndef STR_NONEMPTY
+#    define STR_NONEMPTY( str ) ( ( str ) != NULL && ( str )[0] != '\0' )
+#endif
+
 /* Ensure OpenGL API version */
 #if !defined( GRAPHICS_API_OPENGL_33 ) && !defined( GRAPHICS_API_OPENGL_ES2 ) && !defined( GRAPHICS_API_OPENGL_ES3 )
 #    define GRAPHICS_API_OPENGL_33
@@ -106,9 +110,14 @@
 //----------------------------------------------------------------------------------------------------------------------
 #if SUPPORTS_PROGRAMMABLE_PIPELINE
 
+// OpenGL extention loader function signature
+typedef void * ( *leglLoadProc )( const char * name );
+
 // Current legl State and Configs
 typedef struct leglContext
 {
+    leglLoadProc procLoader; // OpenGL extension loader
+
     struct
     {
         int framebufferWidth;  // Current framebuffer width
@@ -129,8 +138,6 @@ typedef struct leglContext
     } Shader;
 
 } leglContext;
-
-typedef void * ( *leglLoadProc )( const char * name );
 
 #endif // SUPPORTS_PROGRAMMABLE_PIPELINE
 
@@ -165,7 +172,9 @@ LEAPI void leInit( int width, int height ); // Initialize OpenGL states
 LEAPI void leClose( void );                 // Deinitialize OpenGL states and unload default shader
 
 // Initialize OpenGL extensions using platform-specific loader
-LEAPI void leLoadExtensions( void * loaderPtr );               // Load the required required OpenGL extensions
+LEAPI void   leLoadExtensions( void * loaderPtr );             // Load the required required OpenGL extensions
+LEAPI void * leGetProcAddress( const char * name );            // Get the OpenGL procedure address by the given name
+
 LEAPI void leEnable( unsigned int capability, int enable );    // Enable or disable a GL capability
 
 LEAPI void leClearColor( float r, float g, float b, float a ); // Clear the color buffer with the given color
@@ -351,6 +360,12 @@ leLoadExtensions( void * loaderPtr )
     TRACELOG( LOG_INFO, "  - Version : %s", glGetString( GL_VERSION ) );
     TRACELOG( LOG_INFO, "  - GLSL    : %s", glGetString( GL_SHADING_LANGUAGE_VERSION ) );
 
+#    if SUPPORTS_PROGRAMMABLE_PIPELINE
+
+    leState.procLoader = (leglLoadProc)loaderPtr;
+
+#    endif
+
     // Display extension count
 #    if defined( GRAPHICS_API_OPENGL_33 )
     GLint numExtensions = 0;
@@ -394,6 +409,25 @@ leLoadExtensions( void * loaderPtr )
             LE_FREE( extensionsCopy );
         }
 #    endif
+}
+
+// Get the OpenGL procedure address by the given name
+INLINE void *
+leGetProcAddress( const char * name )
+{
+    if( !STR_NONEMPTY( name ) )
+        {
+            TRACELOG( LOG_WARNING, "LEGL: leGetProcAddress: Invalid procedure name (null or empty)" );
+            return NULL;
+        }
+
+    void * proc = NULL;
+
+#    if SUPPORTS_PROGRAMMABLE_PIPELINE
+    proc = leState.procLoader( name );
+#    endif
+
+    return proc;
 }
 
 // Enable or disable a GL capability
